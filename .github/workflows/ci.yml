@@ -62,15 +62,15 @@ jobs:
           cache: pip
       - run: python -m pip install -e ".[dev]"
       - name: Lint
-        run: ruff check src tests
+        run: ruff check src tests code
       - name: Format check
-        run: ruff format --check src tests
+        run: ruff format --check src tests code
       - name: Type check
         run: mypy
 
   # ------------------------------------------------------- 3. branchless gate
   branchless-gate:
-    name: Branchless core (§5.7)
+    name: Branchless core
     runs-on: ubuntu-latest
     needs: [quality]
     steps:
@@ -85,7 +85,7 @@ jobs:
 
   # ------------------------------------------------------ 4. oracle parity
   oracle-parity:
-    name: 1-based vs oracle · q ∈ {7,9,12,24,60}
+    name: 1-based vs oracle · q in {7,9,12,24,60}
     runs-on: ubuntu-latest
     needs: [test]
     steps:
@@ -98,11 +98,32 @@ jobs:
       - name: Cross-check all cycle lengths
         run: pytest tests/test_transition.py -v --no-cov -k "oracle or parity"
 
-  # ------------------------------------------------------- 5. build check
+  # -------------------------------------------------- 5. verification scripts
+  scripts:
+    name: code/ verification scripts
+    runs-on: ubuntu-latest
+    needs: [quality]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -e ".[dev]"
+      - name: Foundation
+        run: python code/verify_foundation.py --max 50000 --quiet
+      - name: Ladder
+        run: python code/verify_ladder.py --max 2000 --quiet
+      - name: Clock
+        run: python code/verify_clock.py --days 1 --random 50000 --quiet
+      - name: Oracle comparison
+        run: python code/compare_oracle.py --steps 1000
+
+  # ------------------------------------------------------- 6. build check
   build:
     name: sdist + wheel
     runs-on: ubuntu-latest
-    needs: [test]
+    needs: [test, scripts]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
