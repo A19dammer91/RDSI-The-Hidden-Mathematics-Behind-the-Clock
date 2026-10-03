@@ -86,7 +86,7 @@ Remove either property, and uniqueness collapses.
 | Base relation | One foundation relation: `25 ≡ 1 (mod 12)` | Each base divides the next |
 | Coefficient bounds | none | `< 60`, `< 60`, `< 24` |
 | Number of solutions | multiple, ordered as a ladder | exactly one |
-| Frobenius number | **263** | none: every instant is representable |
+| Frobenius number | **263** | none, every instant is representable |
 | Source of structure | A single residue relation | A hierarchical divisibility chain |
 | Purpose | explore multiplicity | guarantee uniqueness |
 
@@ -244,24 +244,31 @@ All four pass in the reference implementation, for the ranges the paper describe
 ├── RDSI.pdf                     # Representation, Domain Modelling and Software Implementation
 ├── Clock_Structure.pdf          # The Clock [3600,60,1] and the (25,12)-System
 ├── README.md                    # this file
+├── CITATION.cff                 # citation metadata
+├── LICENSE                      # CC BY-NC-SA 4.0
 ├── pyproject.toml               # PEP 621 metadata, hatchling build
 ├── .github/workflows/
-│   └── ci.yml                   # test, lint, type, branchless gate
+│   └── ci.yml                   # test, lint, type, branchless gate, oracle parity, scripts, build
 ├── src/rd/
+│   ├── __init__.py              # package exports
+│   ├── __main__.py              # CLI entry point
 │   ├── cycle.py                 # 1-based cycle algebra
 │   ├── ladder.py                # Diophantine ladder and Frobenius number
 │   ├── cascade.py               # clock decomposition and display layer
-│   ├── adapters.py              # 0-based to 1-based bridge
-│   └── __main__.py              # CLI
+│   └── adapters.py              # 0-based to 1-based bridge
 ├── tests/
 │   ├── test_foundation.py       # A0 = N mod 12 for all N >= 264
 │   ├── test_ladder.py           # every pair satisfies 25A + 12B = N
 │   ├── test_cascade.py          # round-trip uniqueness
 │   ├── test_transition.py       # position never 0
 │   └── test_branchless.py       # AST branch counter
-├── code/                        # standalone verification scripts
-├── figures/                     # figures used in the papers
-└── docs/                        # interactive HTML demo
+├── code/
+│   ├── verify_foundation.py     # standalone sweep for the foundation relation
+│   ├── verify_ladder.py         # standalone sweep for the ladder
+│   ├── verify_clock.py          # standalone round-trip and dial check
+│   └── compare_oracle.py        # 0-based vs 1-based vs oracle
+└── docs/
+    └── index.html               # interactive demo
 ```
 
 ---
@@ -286,6 +293,46 @@ pytest -m "not slow"                          # fast feedback
 ruff check src tests && mypy                  # lint and types
 pytest tests/test_branchless.py -v --no-cov   # the gate
 ```
+
+---
+
+## Verification scripts
+
+The `code/` folder contains four standalone scripts that verify the invariants from the RDSI paper. They do not require installing the package: each script adds `src/` to the import path itself, so it runs directly from the repo root.
+
+| Script | What it verifies | Default range |
+|---|---|---|
+| `verify_foundation.py` | For every N from 264 onward, the smallest A equals N mod 12. The Frobenius number 263 has no representation. | 264 to 200,000 |
+| `verify_ladder.py` | Every pair on the ladder satisfies p·A + q·B = N with B at least 0. The fast counter matches a brute-force count. Pairs are ordered and the step size is exactly +q in A and −p in B. | 0 to 5,000 |
+| `verify_clock.py` | Composing after decomposing returns the original value for every instant. Hours stay below 24, minutes and seconds below 60, millis below 1000. The dial is always 1 to 12. The worked example 45,296,789 ms reads as 0 d 12:34:56.789. | 2 days and 200,000 random instants |
+| `compare_oracle.py` | The 1-based model is compared against a step-by-step oracle for q = 7, 9, 12, 24, 60. The script reports how often the plain 0-based model fails at a boundary, how many branches a corrected 0-based model needs, and that the 1-based model needs none. | 2,000 steps per q |
+
+Each script exits with code 0 on success and 1 on failure, so they can be used as a gate in any pipeline.
+
+### Run them
+
+```bash
+python code/verify_foundation.py --max 200000
+python code/verify_ladder.py --max 5000
+python code/verify_clock.py --days 2 --random 200000
+python code/compare_oracle.py --steps 2000
+```
+
+Every script accepts `--quiet` to suppress progress output. The first three accept a different range or different coefficients through flags. Run any script with `--help` for the full list.
+
+### What the comparison shows
+
+The output of `compare_oracle.py` is the numeric form of the branchless claim. For each cycle length `q`, three implementations are compared against an oracle that simulates the cycle step by step, without any formula.
+
+For `q = 12` the result is:
+
+| Implementation | Label errors | Branches |
+|---|---|---|
+| 0-based, plain mod | 1/q of all inputs | 0 |
+| 0-based, corrected | 0 | 6 |
+| 1-based, p ≡ 1 (mod q) | 0 | 0 |
+
+The plain 0-based model fails at every boundary (12, 24, 36, ...). Making it correct costs six conditional branches. The 1-based model is correct on every input without any branch.
 
 ---
 
