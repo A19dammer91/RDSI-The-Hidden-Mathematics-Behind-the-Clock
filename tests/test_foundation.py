@@ -1,8 +1,8 @@
 """Invariant 1: the foundation relation.
 
-For every N >= 264 the smallest coefficient A on the ladder equals N mod 12.
-The value 263 is the Frobenius number of (25, 12): the largest integer that
-has no representation at all.
+For every N from 264 onward the smallest coefficient A on the ladder
+equals N mod 12. The value 263 is the Frobenius number of (25, 12):
+the largest integer that has no representation at all.
 """
 from __future__ import annotations
 
