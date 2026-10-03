@@ -1,4 +1,3 @@
-```markdown
 # RDSI: The Hidden Mathematics Behind the Clock
 
 **Representation, Domain Modelling and Software Implementation.**
@@ -144,7 +143,7 @@ Both columns give the same arithmetic result. Only the second column keeps end a
 pip install -e ".[dev]"      # editable, with test and lint tooling
 ```
 
-Use
+### Use
 
 ```python
 from rd.cycle    import Cycle
@@ -177,7 +176,7 @@ to_zero_based(12, 12)     # 0
 from_zero_based(0, 12)    # 12
 ```
 
-CLI
+### CLI
 
 ```bash
 $ python -m rd 45296789 --ms
@@ -194,49 +193,51 @@ geen representatie voor N=263 in (25,12)      # Frobenius
 
 ---
 
-The branchless claim
+## The branchless claim
 
-The RDSI paper shows that a 0-based model needs six conditional branches to be correct at every boundary (12, 24, 36, ...), while a 1-based model p ≡ 1 (mod q) needs none. The comparison was run for q = 7, 9, 12, 24, 60.
+The RDSI paper shows that a 0-based model needs **six conditional branches** to be correct at every boundary (12, 24, 36, ...), while a 1-based model `p ≡ 1 (mod q)` needs **none**. The comparison was run for `q = 7, 9, 12, 24, 60`.
 
-That claim is not asserted here. It is a CI gate. Every push runs:
+That claim is not asserted here. It is a **CI gate**. Every push runs:
 
 ```bash
 pytest tests/test_branchless.py -v --no-cov
 ```
 
-which parses the AST of the hot-path functions and fails if any if, ternary, or and/or appears:
+which parses the AST of the hot-path functions and fails if any `if`, ternary, or `and`/`or` appears:
 
-Function File Branches in path
-Cycle.index cycle.py 0
-Cycle.position cycle.py 0
-Cycle.cycles cycle.py 0
-Cycle.decompose cycle.py 0
-Cycle.transition_count cycle.py 0
-dial_hour cascade.py 0
-to_zero_based adapters.py 0
-from_zero_based adapters.py 0
+| Function | File | Branches in path |
+|---|---|---|
+| `Cycle.index` | `cycle.py` | 0 |
+| `Cycle.position` | `cycle.py` | 0 |
+| `Cycle.cycles` | `cycle.py` | 0 |
+| `Cycle.decompose` | `cycle.py` | 0 |
+| `Cycle.transition_count` | `cycle.py` | 0 |
+| `dial_hour` | `cascade.py` | 0 |
+| `to_zero_based` | `adapters.py` | 0 |
+| `from_zero_based` | `adapters.py` | 0 |
 
-Guards (raise in __post_init__, system validation in ladder.py) are excluded: they run at the edge, not in the path.
+Guards (`raise` in `__post_init__`, system validation in `ladder.py`) are excluded: they run at the edge, not in the path.
 
-If someone later tries to fix a corner case by adding an if in Cycle.position, the build turns red.
+If someone later tries to fix a corner case by adding an `if` in `Cycle.position`, the build turns red.
 
 ---
 
-The four invariants
+## The four invariants
 
 The RDSI paper records four hard properties that can be checked directly as tests:
 
-Property What is checked
-Foundation For every N from 264 onward, the smallest A equals N mod 12
-Ladder holds Every pair on the ladder satisfies 25A + 12B = N and B >= 0
-Clock uniqueness Decomposing after composing returns the original value
-Transition After position 12 comes position 1 with one extra cycle; position 0 never occurs
+| Property | What is checked |
+|---|---|
+| Foundation | For every N from 264 onward, the smallest A equals `N mod 12` |
+| Ladder holds | Every pair on the ladder satisfies `25A + 12B = N` and `B >= 0` |
+| Clock uniqueness | Decomposing after composing returns the original value |
+| Transition | After position 12 comes position 1 with one extra cycle; position 0 never occurs |
 
 All four pass in the reference implementation, for the ranges the paper describes.
 
 ---
 
-Repository structure
+## Repository structure
 
 ```
 .
@@ -265,7 +266,7 @@ Repository structure
 
 ---
 
-Running locally
+## Running locally
 
 ```bash
 git clone https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour
@@ -288,33 +289,34 @@ pytest tests/test_branchless.py -v --no-cov   # the gate
 
 ---
 
-The most beautiful time a clock can show
+## The most beautiful time a clock can show
 
-12:34:56.789
+> **12:34:56.789**
 
 Digits 1 through 9, in order. A lucky hit of the decimal system and the 24-hour division.
 
-In the interactive demo there is a slider that ends exactly on that time: 45,296,789 milliseconds. Drag it all the way right and land on 12 hours, 34 minutes, 56 seconds, and 789 thousandths.
+In the [interactive demo](https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/) there is a slider that **ends exactly on that time**: 45,296,789 milliseconds. Drag it all the way right and land on 12 hours, 34 minutes, 56 seconds, and 789 thousandths.
 
 It is not a mathematical necessity. It is a tribute to the structure.
 
 ---
 
-Papers
+## Papers
 
 This repository accompanies four Zenodo records.
 
-Paper Role DOI
-RDSI: Representation, Domain Modelling and Software Implementation The index paper. Introduces the representational choice p ≡ 1 (mod q), the ladder, and the software implementation. 10.5281/zenodo.23077746
-The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison Structural comparison. Proves that positional divisibility and the modular condition are incompatible by design. 10.5281/zenodo.22804148
-The 19-9 System: N = 19A + 9B Companion Diophantine structure. Same core relation, smaller coefficients. 10.5281/zenodo.19474707
-The D³ Pattern: Deterministic Data Decomposition by A-C Coupling Companion pattern paper. A single anchor value and a closed rule across five layers. 10.5281/zenodo.20819940
+| Paper | Role | DOI |
+|---|---|---|
+| RDSI: Representation, Domain Modelling and Software Implementation | The index paper. Introduces the representational choice `p ≡ 1 (mod q)`, the ladder, and the software implementation. | [10.5281/zenodo.23077746](https://doi.org/10.5281/zenodo.23077746) |
+| The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison | Structural comparison. Proves that positional divisibility and the modular condition are incompatible by design. | [10.5281/zenodo.22804148](https://doi.org/10.5281/zenodo.22804148) |
+| The 19-9 System: N = 19A + 9B | Companion Diophantine structure. Same core relation, smaller coefficients. | [10.5281/zenodo.19474707](https://zenodo.org/records/19474707) |
+| The D³ Pattern: Deterministic Data Decomposition by A-C Coupling | Companion pattern paper. A single anchor value and a closed rule across five layers. | [10.5281/zenodo.20819940](https://doi.org/10.5281/zenodo.20819940) |
 
-The 19-9 system shares the same core, p ≡ 1 (mod q), with the (25,12) system. Scaling from (19,9) to (25,12) moves the Frobenius number from 143 to 263 and the structural period pq from 171 to 300. The anchor family, the first run of q consecutive representable integers, starts at 144 and 264 respectively and grows from 9 to 12 integers.
+The **19-9 system** shares the same core, `p ≡ 1 (mod q)`, with the (25,12) system. Scaling from (19,9) to (25,12) moves the Frobenius number from 143 to 263 and the structural period `pq` from 171 to 300. The anchor family, the first run of `q` consecutive representable integers, starts at 144 and 264 respectively and grows from 9 to 12 integers.
 
 ---
 
-Citation
+## Citation
 
 ```bibtex
 @misc{elissaoui2026rdsi,
@@ -347,18 +349,16 @@ Citation
 
 ---
 
-License
+## License
 
-Released under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0).
+Released under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0** (CC BY-NC-SA 4.0).
 Commercial use is not covered by this license.
 
 ---
 
-Contact
+## Contact
 
-Bilal El Issaoui, Independent Researcher, Amsterdam
+**Bilal El Issaoui**, Independent Researcher, Amsterdam
 elissa.oui.amster@gmail.com · elissa.oui@outlook.com
 
-Or open an issue or start a discussion.
-
-```
+Or open an [issue](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/issues) or start a [discussion](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/discussions).
