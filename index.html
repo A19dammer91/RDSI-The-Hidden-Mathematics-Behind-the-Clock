@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Time Decomposition of the Clock | [3600, 60, 1]</title>
+<title>RDSI | The Hidden Mathematics Behind the Clock</title>
 <style>
   :root{
     --bg:#f6f5f2; --card:#ffffff; --ink:#16181d; --muted:#6d6f76;
@@ -31,6 +31,28 @@
     color:var(--accent);
     margin:0 0 22px;
   }
+
+  .papers{
+    display:flex;flex-direction:column;gap:6px;margin:0 0 30px;
+    font-size:.85rem;
+  }
+  .papers a{
+    color:var(--ink);text-decoration:none;
+    display:flex;align-items:baseline;gap:8px;
+    padding:6px 0;
+    border-bottom:1px solid var(--line);
+    transition:color .15s,border-color .15s;
+  }
+  .papers a:hover{color:var(--accent);border-color:var(--accent)}
+  .papers a:last-child{border-bottom:none}
+  .papers .tag{
+    font-family:var(--mono);font-size:.65rem;font-weight:700;
+    text-transform:uppercase;letter-spacing:.08em;
+    color:var(--accent);background:var(--accent-soft);
+    padding:2px 7px;border-radius:999px;white-space:nowrap;
+    flex-shrink:0;
+  }
+  .papers .label{flex:1}
 
   .prose{font-size:1rem;color:#33363d;margin:0 0 34px}
   .prose b{font-weight:650;color:var(--ink)}
@@ -122,6 +144,13 @@
     font-size:.8rem;
     color:#33363d;
   }
+  .table.mono td:first-child{
+    font-family:var(--mono);
+    font-size:.8rem;
+    font-weight:650;
+  }
+  .table .accent{color:var(--accent);font-weight:700}
+  .table .zero{color:#9b9a94}
 
   .layers{display:flex;flex-direction:column}
   .layer{
@@ -260,11 +289,26 @@
   }
   .speedhint b{color:var(--accent);font-weight:700;font-family:var(--mono)}
 
+  .callout{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:18px 22px; margin:20px 0;
+    box-shadow:0 1px 2px rgba(20,20,20,.04);
+  }
+  .callout .ctitle{
+    font-family:var(--mono); font-size:.72rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:.1em;
+    color:var(--accent); margin:0 0 10px;
+  }
+  .callout p{margin:0 0 10px;font-size:.9rem;color:#33363d}
+  .callout p:last-child{margin-bottom:0}
+
   .foot{
     max-width:780px; margin:56px auto 0; padding:0 20px;
     font-size:.78rem; color:#9b9a94;
     line-height:1.6;
   }
+  .foot a{color:var(--muted);text-decoration:none;border-bottom:1px solid var(--line)}
+  .foot a:hover{color:var(--accent);border-color:var(--accent)}
 
   @media (max-width:520px){
     .wrap{padding-top:32px}
@@ -278,6 +322,7 @@
     .chain{font-size:.9rem}
     .table{font-size:.78rem}
     .table td:last-child{font-size:.72rem}
+    .papers{font-size:.8rem}
   }
 </style>
 </head>
@@ -286,9 +331,28 @@
 <div class="wrap">
 
   <header class="head">
-    <h1>Time Decomposition of the Clock</h1>
-    <p class="subtitle">[3600, 60, 1]</p>
+    <h1>RDSI: The Hidden Mathematics Behind the Clock</h1>
+    <p class="subtitle">Representation, Domain Modelling and Software Implementation</p>
   </header>
+
+  <nav class="papers" aria-label="Papers">
+    <a href="https://doi.org/10.5281/zenodo.23077746" target="_blank" rel="noopener">
+      <span class="tag">RDSI</span>
+      <span class="label">Representation, Domain Modelling and Software Implementation</span>
+    </a>
+    <a href="https://doi.org/10.5281/zenodo.22804148" target="_blank" rel="noopener">
+      <span class="tag">Clock</span>
+      <span class="label">The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison</span>
+    </a>
+    <a href="https://zenodo.org/records/19474707" target="_blank" rel="noopener">
+      <span class="tag">19-9</span>
+      <span class="label">The 19-9 System: N = 19A + 9B</span>
+    </a>
+    <a href="https://github.com/A19dammer91/D3-by-A-C-Coupling-Demo" target="_blank" rel="noopener">
+      <span class="tag">D³</span>
+      <span class="label">Deterministic Data Decomposition by A-C Coupling</span>
+    </a>
+  </nav>
 
   <div class="prose">
     <p>
@@ -469,8 +533,13 @@
         </tr>
         <tr>
           <td>Number of solutions</td>
-          <td>Multiple</td>
+          <td>Multiple, ordered as a ladder</td>
           <td>Exactly one</td>
+        </tr>
+        <tr>
+          <td>Frobenius number</td>
+          <td class="accent">263</td>
+          <td>None, every instant is representable</td>
         </tr>
         <tr>
           <td>Source of structure</td>
@@ -487,6 +556,87 @@
   </section>
 
   <section class="section">
+    <h2>The representational choice: 0-based or 1-based</h2>
+
+    <p>
+      This is the core insight of the RDSI paper. Almost every cycle in software today is
+      modelled 0-based: positions run from 0 up to and including <b>q − 1</b>. That looks
+      neutral, but it causes a structural problem. The value that marks the <b>end</b> of the
+      cycle is at the same time the value of the <b>beginning</b>. Midnight is both the end of
+      the day and the start of the next. Developers know the consequences as off-by-one errors.
+    </p>
+    <p>
+      The RDSI paper shows that the choice between <b>p ≡ 0 (mod q)</b> and
+      <b>p ≡ 1 (mod q)</b> is not an arithmetic choice, it is a <b>representational</b> one.
+      The arithmetic stays identical. The model changes.
+    </p>
+
+    <table class="table mono">
+      <thead>
+        <tr><th>Number T</th><th>Model 0 to 11</th><th>Model 1 to 12</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>12</td>
+          <td class="zero">position 0, called "beginning"</td>
+          <td class="accent">position 12, the end of the cycle</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>position 1</td>
+          <td class="accent">position 1, after one transition</td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td class="zero">position 0: end and beginning at once</td>
+          <td class="accent">position 12: end only</td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td>position 1</td>
+          <td class="accent">position 1, after two complete cycles</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      With <b>p ≡ 1 (mod q)</b>, the transition from one cycle to the next becomes the
+      <b>formal heart</b> of the model, not a by-product of the division. The number 0 never
+      occurs as a position. There is no hour 0; that is hour 12. Hour 13 is hour 1.
+    </p>
+
+    <h3>The same cycle, written two ways</h3>
+
+    <table class="table mono">
+      <thead>
+        <tr><th>Operation</th><th>0-based</th><th>1-based</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>position of T</td>
+          <td class="zero">T mod q</td>
+          <td class="accent">(T − 1) mod q + 1</td>
+        </tr>
+        <tr>
+          <td>cycles elapsed</td>
+          <td class="zero">T div q</td>
+          <td class="accent">(T − 1) div q</td>
+        </tr>
+        <tr>
+          <td>transition count</td>
+          <td>T div q</td>
+          <td>T div q</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Both columns give the same arithmetic result. Only the second column keeps end and
+      beginning separate.
+    </p>
+  </section>
+
+  <section class="section">
     <h2>Why this matters in practice</h2>
 
     <h3>1. If you ever work with time, files, or coordinates</h3>
@@ -499,7 +649,7 @@
       </thead>
       <tbody>
         <tr><td>45,296,789 ms</td><td>12:34:56.789</td><td>days, hours, minutes, seconds, ms</td></tr>
-        <tr><td>1,234,567 bytes</td><td>1.23 MB</td><td>bytes, KB, MB</td></tr>
+        <tr><td>1,234,567 bytes</td><td>1.23 MB (SI) / 1.18 MiB</td><td>bytes, KB, MB</td></tr>
         <tr><td>3,661 seconds</td><td>1:01:01</td><td>hours, minutes, seconds</td></tr>
         <tr><td>20260917</td><td>17 September 2026</td><td>year, month, day</td></tr>
       </tbody>
@@ -524,6 +674,91 @@
       uncertain, like a clock. Those are opposite goals. You cannot unite them in one structure.
       That is not a flaw of the clock. It is a design decision. And both choices are Diophantine
       at heart. They simply pick different mechanisms to reach their purpose.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>The branchless claim</h2>
+
+    <p>
+      The RDSI paper shows that a 0-based model needs <b>six conditional branches</b> to be
+      correct at every boundary (12, 24, 36, ...), while a 1-based model <b>p ≡ 1 (mod q)</b>
+      needs <b>none</b>. The comparison was run for q = 7, 9, 12, 24, 60.
+    </p>
+
+    <table class="table mono">
+      <thead>
+        <tr><th>Implementation (q = 12)</th><th>Label wrong</th><th>Branches</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0-based, plain mod</td>
+          <td class="zero">8.3 %</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>0-based, corrected</td>
+          <td>0 %</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td>1-based</td>
+          <td class="accent">0 %</td>
+          <td class="accent">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      The claim is enforced mechanically. A continuous integration gate parses the syntax tree
+      of the hot-path functions and fails the build if any <b>if</b>, ternary, or <b>and/or</b>
+      appears in the path.
+    </p>
+
+    <div class="callout">
+      <p class="ctitle">Branchless core</p>
+      <p>
+        <b>Cycle.index</b>, <b>Cycle.position</b>, <b>Cycle.cycles</b>,
+        <b>Cycle.decompose</b>, <b>Cycle.transition_count</b>, <b>dial_hour</b>,
+        <b>to_zero_based</b>, <b>from_zero_based</b>. Guards such as validation at
+        construction time are excluded: they run at the edge, not in the path.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>The four invariants</h2>
+
+    <p>
+      The RDSI paper records four hard properties that can be checked directly as tests.
+    </p>
+
+    <table class="table">
+      <thead>
+        <tr><th>Property</th><th>What is checked</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Foundation</td>
+          <td>For every N from 264 onward, the smallest A equals N mod 12</td>
+        </tr>
+        <tr>
+          <td>Ladder holds</td>
+          <td>Every pair on the ladder satisfies 25A + 12B = N and B ≥ 0</td>
+        </tr>
+        <tr>
+          <td>Clock uniqueness</td>
+          <td>Decomposing after composing returns the original value</td>
+        </tr>
+        <tr>
+          <td>Transition</td>
+          <td>After position 12 comes position 1 with one extra cycle; position 0 never occurs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      All four pass in the reference implementation, for the ranges the paper describes.
     </p>
   </section>
 
@@ -579,6 +814,11 @@
       look at the remainder, and you are done. Every other solution then follows automatically:
       add 12 to the number of €25 notes, subtract 25 from the number of €12 notes. Keep doing
       that until it no longer fits. That is what produces the ladder of valid answers.
+    </p>
+    <p>
+      The smallest representable number is <b>264 = 24 · 11</b>. The largest number that cannot
+      be represented at all is <b>263</b>. From 264 onward, every integer has at least one
+      representation.
     </p>
 
     <h3>The clock</h3>
@@ -643,11 +883,45 @@
     </ol>
   </section>
 
+  <section class="section">
+    <h2>Papers and code</h2>
+    <table class="table">
+      <thead>
+        <tr><th>Paper</th><th>DOI</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>RDSI: Representation, Domain Modelling and Software Implementation</td>
+          <td><a href="https://doi.org/10.5281/zenodo.23077746" target="_blank" rel="noopener">10.5281/zenodo.23077746</a></td>
+        </tr>
+        <tr>
+          <td>The Clock [3600,60,1] and the (25,12)-System</td>
+          <td><a href="https://doi.org/10.5281/zenodo.22804148" target="_blank" rel="noopener">10.5281/zenodo.22804148</a></td>
+        </tr>
+        <tr>
+          <td>The 19-9 System: N = 19A + 9B</td>
+          <td><a href="https://zenodo.org/records/19474707" target="_blank" rel="noopener">10.5281/zenodo.19474707</a></td>
+        </tr>
+        <tr>
+          <td>The D³ Pattern</td>
+          <td><a href="https://doi.org/10.5281/zenodo.20819940" target="_blank" rel="noopener">10.5281/zenodo.20819940</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      The reference implementation (<b>rd</b>, Representation Domain) is available on GitHub:
+      <a href="https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour" target="_blank" rel="noopener">the-exact-algebraic-condition-for-clock-behaviour</a>.
+    </p>
+  </section>
+
 </div>
 
 <p class="foot">
-  Bilal El Issaoui, Amsterdam, 2026. This page is part of a series on linear Diophantine
-  representation systems with p ≡ 1 (mod q).
+  Bilal El Issaoui, Amsterdam, 2026. This page is part of the RDSI series on linear Diophantine
+  representation systems with p ≡ 1 (mod q). Papers:
+  <a href="https://doi.org/10.5281/zenodo.23077746" target="_blank" rel="noopener">RDSI</a> ·
+  <a href="https://doi.org/10.5281/zenodo.22804148" target="_blank" rel="noopener">Clock comparison</a> ·
+  <a href="https://zenodo.org/records/19474707" target="_blank" rel="noopener">19-9 system</a>.
 </p>
 
 <script>
