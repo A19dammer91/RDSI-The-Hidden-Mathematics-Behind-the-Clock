@@ -1,4 +1,9 @@
-"""CLI: python -m rd N [--ms | --system p,q]"""
+"""CLI for the Representation Domain package.
+
+Usage:
+    python -m rd 45296789 --ms
+    python -m rd 500 --system 25,12
+"""
 from __future__ import annotations
 
 import argparse
@@ -13,12 +18,18 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="rd",
         description="Representation Domain: cycles, ladders, cascades.",
     )
-    p.add_argument("n", type=int, help="het getal N of tijdstip T")
+    p.add_argument("n", type=int, help="the value N or timestamp T")
     g = p.add_mutually_exclusive_group(required=True)
-    g.add_argument("--ms", action="store_true",
-                   help="decomposeer N als milliseconden sinds middernacht")
-    g.add_argument("--system", metavar="P,Q",
-                   help="genereer de ladder voor het (P,Q)-systeem")
+    g.add_argument(
+        "--ms",
+        action="store_true",
+        help="decompose N as milliseconds since midnight",
+    )
+    g.add_argument(
+        "--system",
+        metavar="P,Q",
+        help="generate the ladder for the (P,Q) system",
+    )
     return p
 
 
