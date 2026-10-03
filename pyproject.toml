@@ -8,13 +8,12 @@ version = "0.1.0"
 description = "Representation Domain: 1-based cycle algebra, Diophantine ladder, and clock cascade."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "CC-BY-NC-SA-4.0" }
 authors = [{ name = "Bilal El Issaoui", email = "a19dammer91@users.noreply.github.com" }]
 keywords = ["diophantine", "modular-arithmetic", "clock", "representation", "off-by-one"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -38,13 +37,14 @@ rd = "rd.__main__:main"
 
 [project.urls]
 Homepage = "https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour"
-Paper = "https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/blob/main/RDSI.pdf"
+Paper = "https://doi.org/10.5281/zenodo.23077746"
+Changelog = "https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/releases"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rd"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/rd", "tests", "README.md", "RDSI.pdf"]
+include = ["src/rd", "tests", "README.md", "CITATION.cff", "LICENSE"]
 
 # ---------------------------------------------------------------- pytest
 [tool.pytest.ini_options]
@@ -83,7 +83,7 @@ select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]  # asserts toegestaan in tests
+"tests/*" = ["S101"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["rd"]
