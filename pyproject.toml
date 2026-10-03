@@ -54,7 +54,7 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 markers = [
   "slow: tests die >1s duren (Frobenius-sweep, 200k clock-sweep)",
-  "invariant: harde invarianten uit §5.5 van het paper",
+  "invariant: harde invarianten uit het RDSI paper",
 ]
 
 # ---------------------------------------------------------------- coverage
@@ -65,18 +65,19 @@ branch = true
 [tool.coverage.report]
 show_missing = true
 skip_covered = true
-fail_under = 95
+fail_under = 100
 exclude_lines = [
   "pragma: no cover",
   "raise NotImplementedError",
   "if TYPE_CHECKING:",
+  "if __name__ == .__main__.:",
 ]
 
 # ---------------------------------------------------------------- ruff
 [tool.ruff]
 target-version = "py310"
 line-length = 88
-src = ["src", "tests"]
+src = ["src", "tests", "code"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
@@ -84,6 +85,7 @@ ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101"]
+"code/*" = ["E402"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["rd"]
