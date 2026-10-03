@@ -1,28 +1,48 @@
-cff-version: 1.2.0
-title: "N = 25A + 12B | The Clock Structure | p ≡ 1 (mod q)"
+cff-version: 2.0.0
 message: "If you use this work, please cite it as below."
+title: "RDSI: The Hidden Mathematics Behind the Clock"
+abstract: >
+  The RDSI repository accompanies a series of papers on linear Diophantine
+  representation systems with the foundation relation p ≡ 1 (mod q).
+  It compares two structurally opposite architectures that share the same
+  equation shape: the (25,12) system N = 25A + 12B, which produces an
+  ordered ladder of representations and whose smallest coefficient is
+  A₀ = N mod 12 in a single step, and the clock [3600,60,1], which
+  guarantees exactly one representation per instant through a hierarchical
+  divisibility chain with bounded coefficients. The papers formalise the
+  choice between 0-based and 1-based cycle models, prove that positional
+  divisibility and the modular condition are structurally incompatible,
+  and measure the difference in software: a 0-based model needs six
+  conditional branches to be correct at every boundary, while a 1-based
+  model p ≡ 1 (mod q) needs none. The repository ships the reference
+  implementation (rd, Representation Domain) with a branch-free core,
+  enforced by CI, and an interactive demo.
 type: software
 authors:
-  - family-names: el Issaoui
+  - family-names: El Issaoui
     given-names: Bilal
     affiliation: Independent Researcher, Amsterdam
 year: 2026
-doi: 10.5281/zenodo.20273909
-url: https://doi.org/10.5281/zenodo.20273909
+doi: 10.5281/zenodo.23077746
+url: https://doi.org/10.5281/zenodo.23077746
 repository-code: https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour
-abstract: >
-  This paper analyses the linear Diophantine system N = 25A + 12B,
-  where p ≡ 1 (mod q) — the exact algebraic condition for clock behaviour.
-  The minimal A-coordinate is directly determined as A₀ = N mod 12,
-  without search or iteration. An exact O(1) counting formula R(N) is
-  established and compared systematically with the (19,9)-system.
+license: CC-BY-NC-SA-4.0
 keywords:
   - linear Diophantine equations
+  - representation domain
   - clock structure
-  - minimal representation
-  - counting formula
+  - 1-based cycle algebra
   - p ≡ 1 (mod q)
   - Frobenius boundary
-license: MIT
-
-
+  - off-by-one errors
+  - branchless core
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23077746
+    description: "RDSI: Representation, Domain Modelling and Software Implementation"
+  - type: doi
+    value: 10.5281/zenodo.22804148
+    description: "The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison"
+  - type: doi
+    value: 10.5281/zenodo.19474707
+    description: "The 19-9 System: N = 19A + 9B"
