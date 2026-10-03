@@ -2,9 +2,7 @@
 
 The RD model is 1-based: dial positions run from 1 to q. Most software
 is 0-based: index positions run from 0 to q-1. The two conversions
-below are the *only* correct shifts, and they are branch-free.
-
-See §3.4 and §5.7 of the paper.
+below are the only correct shifts, and they are branch-free.
 """
 from __future__ import annotations
 
@@ -15,23 +13,15 @@ __all__ = [
 
 
 def to_zero_based(position: int, q: int) -> int:
-    """1..q → 0..q-1.
+    """1..q to 0..q-1.
 
-    ``12 -> 0`` for ``q = 12``. The value 0 means "end of cycle" in
-    the 0-based world; it is not a valid input for the 1-based model.
-
-    Parameters
-    ----------
-    position:
-        A 1-based dial position.
-    q:
-        Cycle length, ``q >= 1``.
+    12 -> 0 for q = 12. The value 0 means "end of cycle" in the
+    0-based world; it is not a valid input for the 1-based model.
 
     Raises
     ------
     ValueError
-        If ``q < 1``. The mapping itself has no other precondition:
-        ``position`` is reduced modulo ``q`` without branching.
+        If q < 1.
     """
     if q < 1:
         raise ValueError(f"q >= 1 vereist, kreeg q={q}")
@@ -39,23 +29,16 @@ def to_zero_based(position: int, q: int) -> int:
 
 
 def from_zero_based(zero: int, q: int) -> int:
-    """0..q-1 → 1..q.
+    """0..q-1 to 1..q.
 
-    ``0 -> 12`` for ``q = 12``. Same expression as
-    :meth:`rd.cycle.Cycle.position`; that is not a coincidence, it is
-    the only correct shift, and it is branch-free.
-
-    Parameters
-    ----------
-    zero:
-        A 0-based index.
-    q:
-        Cycle length, ``q >= 1``.
+    0 -> 12 for q = 12. Same expression as Cycle.position; that is
+    not a coincidence, it is the only correct shift, and it is
+    branch-free.
 
     Raises
     ------
     ValueError
-        If ``q < 1``.
+        If q < 1.
     """
     if q < 1:
         raise ValueError(f"q >= 1 vereist, kreeg q={q}")
