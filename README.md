@@ -1,12 +1,20 @@
-# THE HIDDEN MATHEMATICS BEHIND THE 🕐
+```markdown
+# RDSI: The Hidden Mathematics Behind the Clock
 
-### The Clock [3600, 60, 1] and the (25, 12) System: Two Diophantine Structures, Two Purposes
+**Representation, Domain Modelling and Software Implementation.**
 
-**Author:** Bilal El Issaoui
-**Independent Researcher**, Amsterdam
-**Year:** 2026
+**Two Diophantine structures, two purposes, and a Python package that implements both.**
 
-🔗 **[Try the interactive web demo](https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/)**
+[![CI](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/actions/workflows/ci.yml/badge.svg)](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/actions/workflows/ci.yml)
+[![branchless core](https://img.shields.io/badge/branchless%20core-enforced-success)](#the-branchless-claim)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)](LICENSE)
+
+📘 **[RDSI: Representation, Domain Modelling and Software Implementation](https://doi.org/10.5281/zenodo.23077746)**
+📄 **[The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison](https://doi.org/10.5281/zenodo.22804148)**
+🧮 **[The 19-9 System: N = 19A + 9B](https://zenodo.org/records/19474707)**
+🔗 **[Interactive demo](https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/)**
+🧪 **[Companion: D³ Pattern](https://github.com/A19dammer91/D3-by-A-C-Coupling-Demo)**
 
 ---
 
@@ -14,278 +22,343 @@
 
 A stopwatch has been running for **45,296,789 milliseconds**. What does the display say?
 
-Anyone who has ever used a stopwatch knows the answer without thinking:
+Anyone who has used a stopwatch knows the answer without thinking:
 
 > **12:34:56.789**
 
-But almost nobody can explain **how** you get there. Why not 11:34, or 13:56? Where does that 12 come from? Why does a clock jump back to 0 after 59 seconds, and not after 60 or after 100?
+But almost nobody can explain **how** you get there. Why 12 and not 11? Why does a clock jump back after 59 seconds, and not after 60 or 100?
 
-This document is about that question. The answer is surprisingly simple, and underneath it sits a mathematical structure that people have been using for thousands of years without ever seeing it.
+This repository answers that question. It ships three things:
+
+1. **Three papers** that together analyse the clock, compare it to a plain Diophantine system, and generalise the underlying pattern.
+2. **A Python package** (`rd`, *Representation Domain*) that implements the cycle algebra, the Diophantine ladder, and the clock cascade.
+3. **An interactive demo** where you can drag five layers and watch them carry.
 
 ---
 
 ## The everyday example: money
 
-Before we talk about clocks, first something everyone knows.
+Imagine notes of **€25 and €12**. Pay exactly **€575**. How many ways are there?
 
-Imagine you have **notes of €25 and €12**. You want to pay exactly **€575**. How many ways are there to do that?
+Two:
 
-Two ways:
+- 11 × €25 + 25 × €12
+- 23 × €25 + 0 × €12
 
-- 11 notes of €25 and 25 notes of €12
-- 23 notes of €25 and 0 notes of €12
+No others. That is a **linear Diophantine equation**:
 
-No others. That is the whole idea behind what mathematicians call a **linear Diophantine equation**. It sounds heavy, but it just means: *how many coins of each kind do I need to land exactly on an amount, and how many different combinations exist?*
+> N = 25·A + 12·B
 
-That is one extreme. At the other extreme stands the clock.
+The reason two answers exist comes from a single relation:
+
+> **25 ≡ 1 (mod 12)**
+
+Because of that relation, the smallest €25 count is one step: `A₀ = N mod 12`. Every other solution is reached by stepping `+12` in `A` and `−25` in `B`. That ordered family is called the **ladder**.
+
+The smallest representable number is **264 = 24 · 11**. The largest number that cannot be represented at all is **263**. From 264 onward, every integer has at least one representation.
+
+The RDSI paper uses `N = 500` as its worked example. There, `ladder(500, 25, 12)` gives `(8, 25)` and `(20, 0)`.
+
+At the other extreme stands the clock.
 
 ---
 
 ## The clock uses a different Diophantine structure
 
-A clock time can also be written as a linear Diophantine representation. In seconds it looks like this:
+Same equation shape, entirely different behaviour:
 
 > T = 3600·H + 60·M + S
 
-Same shape as the money example. Same kind of equation. But the clock arrives at exactly one answer, while the money example gives you several. The difference is not in the type of equation. It is in the structure of the bases and the bounds on the coefficients.
+But the clock gives **exactly one** answer, not a ladder. Two reasons:
 
-The clock's bases form a chain:
+**1. Hierarchical divisibility.** Every base is an exact multiple of the next:
 
-> 1000 → 60 → 60 → 24
+> 1000 ms → 1 s → 60 s → 1 min → 60 min → 1 h → 24 h → 1 day
 
-Each position value is an exact multiple of the one below it. 1000 milliseconds make one second. 60 seconds make one minute. 60 minutes make one hour. 24 hours make one day. No leftover at any step. And on top of that, each coefficient is bounded: seconds and minutes stay below 60, hours stay below 24.
+**2. Bounded coefficients.** Seconds and minutes stay `< 60`, hours stay `< 24`.
 
-Together, those two properties give exactly one representation for every instant. Remove either one, and the uniqueness collapses.
+Remove either property, and uniqueness collapses.
 
-The money example does the opposite. The two coefficients, 25 and 12, are not in a divisibility relation at all. They are related by a single offset:
+### Side by side
 
-> 25 ≡ 1 (mod 12)
-
-Because of that one relation, you can compute the smallest €25 count directly as N mod 12. But nothing bounds the coefficients, so the same equation accepts a whole ladder of solutions, each one a valid answer.
-
-Both systems are Diophantine. Both are deterministic in the sense that they follow exact rules. They simply achieve their determinism through opposite mechanisms:
-
-| | (25, 12) system | Clock |
+| | (25, 12) system | Clock `[3600, 60, 1]` |
 |---|---|---|
 | Type | Linear Diophantine | Linear Diophantine |
-| Base relation | One foundation relation: 25 ≡ 1 (mod 12) | Each base is a multiple of the one below |
-| Coefficient bounds | None | Seconds < 60, minutes < 60, hours < 24 |
-| Number of solutions | Multiple | Exactly one |
+| Base relation | One foundation relation: `25 ≡ 1 (mod 12)` | Each base divides the next |
+| Coefficient bounds | none | `< 60`, `< 60`, `< 24` |
+| Number of solutions | multiple, ordered as a ladder | exactly one |
+| Frobenius number | **263** | none: every instant is representable |
 | Source of structure | A single residue relation | A hierarchical divisibility chain |
+| Purpose | explore multiplicity | guarantee uniqueness |
 
-A clock is not a weaker Diophantine system. It is a different one, deliberately built to guarantee uniqueness instead of exploring multiplicity.
+A clock is not a weaker Diophantine system. It is a different one, built on purpose.
+
+The RDSI paper proves that the modular condition `p ≡ 1 (mod q)` and positional divisibility are **structurally incompatible**. The clock does not fail to be Diophantine; it is designed not to be.
 
 ---
 
-## Why this matters in practice
+## The representational choice: 0-based or 1-based
 
-You might be thinking: interesting, but what is in it for me? Three things.
+This is the core insight of the RDSI paper.
 
-### 1. If you ever work with time, files, or coordinates
+Almost every cycle in software today is modelled 0-based: positions run from 0 up to and including `q − 1`. That looks neutral, but it causes a structural problem: the value that marks the **end** of the cycle is at the same time the value of the **beginning**. Midnight is both the end of the day and the start of the next. Developers know the consequences as off-by-one errors.
 
-Everywhere you turn one big number into something readable, this happens:
+The RDSI paper shows that the choice between `p ≡ 0 (mod q)` and `p ≡ 1 (mod q)` is not an arithmetic choice, it is a **representational** one. The arithmetic stays identical. The model changes.
 
-| Big number | Readable form | Layers |
+| Number T | Model 0 to 11 | Model 1 to 12 |
 |---|---|---|
-| 45,296,789 ms | 12:34:56.789 | days, hours, minutes, seconds, ms |
-| 1,234,567 bytes | 1.23 MB | bytes, KB, MB |
-| 3,661 seconds | 1:01:01 | hours, minutes, seconds |
-| 20260917 | 17 September 2026 | year, month, day |
+| 12 | position 0, called "beginning" | position 12, the end of the cycle |
+| 13 | position 1 | position 1, after one transition |
+| 24 | position 0: end and beginning at once | position 12: end only |
+| 25 | position 1 | position 1, after two complete cycles |
 
-Once you see the pattern one time, you see it everywhere. And if you have ever had to hunt down a bug in a timestamp, you know it almost always comes down to understanding these layers.
+With `p ≡ 1 (mod q)`, the transition from one cycle to the next becomes the **formal heart** of the model, not a by-product of the division. The number 0 never occurs as a position. There is no hour 0; that is hour 12. Hour 13 is hour 1.
 
-### 2. If you have ever tried to explain modulo to someone
+### The same cycle, written two ways
 
-Modulo (the remainder after division) is famously hard to explain with formulas alone. But **everyone** understands a clock. *"It is 11 o'clock, three hours from now it is 2 o'clock."* That is 11 + 3 = 14, and 14 mod 12 = 2. Once someone sees that, they understand modulo for the rest of their life.
+| Operation | 0-based | 1-based |
+|---|---|---|
+| position of T | `T mod q` | `(T − 1) mod q + 1` |
+| cycles elapsed | `T div q` | `(T − 1) div q` |
+| transition count | `T div q` | `T div q` |
 
-### 3. The transferable insight
-
-Every system with layers on top of each other has to make a choice:
-
-- **Either** you make it easy to find every possible combination (money)
-- **Or** you make it impossible to be uncertain (clock)
-
-Those are opposite goals. You cannot unite them in one structure. That is not a flaw of the clock. It is a design decision. And both choices are Diophantine at heart. They simply pick different mechanisms to reach their purpose.
+Both columns give the same arithmetic result. Only the second column keeps end and beginning separate.
 
 ---
 
-## Why this is a better teaching route than the usual one
+## Why this matters
 
-At school, students usually learn modulo like this:
-
-> *"The remainder after division. 17 mod 12 = 5. Now here are some exercises."*
-
-That works, but it stays abstract. Students can do the sums without understanding why anyone would ever want this.
-
-This route starts in exactly the opposite place:
-
-1. **Start with the clock.** Everyone has an intuition. 12 + 1 = 1. That is not mathematics, that is just how a clock works.
-2. **Then state the rule.** Why does it jump back after 12? Because it can show 12 hours and no more.
-3. **Write the rule down.** That is modulo. The student already has the idea, only the name is missing.
-4. **Apply it to money.** Now the student can solve a Diophantine problem without it being called that.
-5. **Show the difference.** Both systems use the same kind of equation. The clock adds divisibility and bounds. Money does not. That is the real insight.
-
-Someone who learns it this way understands modulo not as a trick, but as a **choice** you make when you build a system with layers. That is a much stronger understanding.
+- **Time, files, coordinates.** Everywhere one big number becomes something readable (45,296,789 ms → `12:34:56.789`, 1,234,567 bytes → `1.23 MB (SI) / 1.18 MiB`, 20260917 → `17 September 2026`), the same layer structure is at work. Timestamp bugs almost always come down to these layers.
+- **Teaching modulo.** Everyone understands *"11 o'clock plus 3 hours is 2 o'clock."* That is `14 mod 12 = 2`. The formula is hard; the clock is not.
+- **A transferable insight.** Every layered system makes one choice: *easy to explore every combination*, or *impossible to be uncertain*. You cannot have both in one structure.
 
 ---
 
-## The most beautiful time a clock can show
+## The `rd` package
 
-There is one time that is special, and you have probably never noticed it:
+`rd` stands for **Representation Domain**. It implements the three representations from the papers in one small, dependency-free library.
 
-> **12:34:56.789**
+### Install
 
-The digits 1 through 9 sit neatly in order. 1, 2, 3, 4, 5, 6, 7, 8, 9. No interruption, no repetition.
-
-It is a lucky hit of the decimal system and the 24-hour division. And it is exactly the time when people take a picture of their clock, or send a message to someone. It is the one second per day when the clock shows its own beauty.
-
-In the interactive document that goes with this paper, there is a slider that **ends exactly on that time**. Drag it all the way to the right and you land on 45,296,789 milliseconds: 12 hours, 34 minutes, 56 seconds, and 789 thousandths of a second.
-
-That is not a mathematical necessity. It is a tribute to the structure you would otherwise never see.
-
----
-
-## The heart of the difference
-
-Now the technical core, but without jargon.
-
-### The (25, 12) system
-
-This system uses **one relation** for the whole number:
-
-> 25 is one more than a multiple of 12.
-
-In other words: 25 = 2 × 12 + 1, or 25 ≡ 1 (mod 12).
-
-Because of this, you can work out in one step how many €25 notes you need at minimum. You divide N by 12, look at the remainder, and you are done. The smallest €25 count is exactly N mod 12.
-
-Every other solution then follows automatically: add 12 to the number of €25 notes, subtract 25 from the number of €12 notes. Keep doing that until it no longer fits. That is what produces the ladder of valid answers.
-
-### The clock
-
-The clock works differently. Its bases form a chain of exact multiples:
-
-> 24 × 60 × 60 × 1000 = 86,400,000
-
-And each coefficient is bounded by the ratio of the adjacent bases. That is what gives you exactly one answer, not a ladder.
-
-You peel off one layer at a time:
-
-1. Take T mod 1000. That gives Ms directly, because 1000 is the smallest base.
-2. Divide away the milliseconds, then take the result mod 60. That gives S.
-3. Divide away the seconds, then take the result mod 60. That gives M.
-4. Divide away the minutes, then take the result mod 24. That gives H.
-
-At every step, the coefficient you extract is automatically bounded by the modulus you just used. Seconds land in [0, 60), minutes in [0, 60), hours in [0, 24). No ambiguity is possible.
-
-### Why they are not the same, even though they look alike
-
-Both systems peel off layers with a mod operation. Both are Diophantine. But they answer different questions.
-
-The (25, 12) system asks: *how many ways can I build N out of these two coefficients?* It answers with a formula for a whole family.
-
-The clock asks: *what is the unique decomposition of T into these five bounded layers?* It answers with exactly one tuple.
-
-Same equation shape. Opposite purposes.
-
----
-
-## The 12-hour trap
-
-There is a classic confusion that many people fall into. The 12-hour dial (13:00 becomes 1:00) uses the same modular idea as the (25, 12) system. It is tempting to think that the clock therefore has the same structure as the money example.
-
-It does not, for two reasons.
-
-**First:** the dial is a **metaphor**. The clock itself does not run on a modulus of 12. The clock runs on 60, 60, 24. The 12 on the dial is a drawing that people have placed on top of the real mechanism.
-
-**Second:** the 12-hour dial loses information. 1 in the morning and 1 in the afternoon look the same. The 24-hour structure does not. That is why the real clock uses 24 hours and not 12. Only with 24 hours does every second stay unique across a whole day.
-
-Test it yourself: 3 in the morning is 10,800 seconds, 3 in the afternoon is 54,000 seconds. With 24 hours, those are two different values. With 12 hours, they both become "3 o'clock" and you can no longer tell them apart. That is precisely the confusion the real clock exists to prevent.
-
----
-
-## Summary in three points
-
-1. **Both are Diophantine.** The money example and the clock are both linear Diophantine representations. Same equation shape, different constraints.
-
-2. **The source of uniqueness differs.** The (25, 12) system relies on a single foundation relation, 25 ≡ 1 (mod 12), with no bounds on the coefficients. The clock relies on a hierarchical divisibility chain, 1000, 60, 60, 24, with bounded coefficients. That is what makes the clock unique and the money example multiple.
-
-3. **Both choices are deliberate.** Neither structure is a mistake. The (25, 12) system is built to explore multiplicity. The clock is built to guarantee certainty. Each answers the question it was designed for.
-
----
-
-## What this paper adds
-
-The mathematical literature has long covered the Frobenius problem, the counting of representations, and positional number systems. What is new here is the **direct structural comparison** between a Diophantine system driven by a single foundation relation and a Diophantine system driven by a hierarchical divisibility chain.
-
-The central message: these two systems cannot be measured with the same ruler, even though both are Diophantine and both use mod operations. One is built around a residue relation, the other around exact divisibility. They both "jump back to 0", but they do it for opposite reasons. And that opposition is precisely what makes them useful for opposite purposes.
-
----
-
-## Repository structure
-
-```
-/paper/       Publication-ready HTML and PDF versions
-/code/        Python scripts for verification and comparison
-/figures/     Figures used in the paper
-README.md     This file
+```bash
+pip install -e ".[dev]"      # editable, with test and lint tooling
 ```
 
-## Code
+Use
 
-The `/code/` folder contains Python scripts for:
+```python
+from rd.cycle    import Cycle
+from rd.ladder   import ladder, frobenius, representation_count
+from rd.cascade  import decompose_ms, compose_ms, format_stamp, dial_hour
+from rd.adapters import to_zero_based, from_zero_based
 
-- Computing the clock decomposition (days, hours, minutes, seconds, ms) for any T
-- Computing all representations of N = 25A + 12B
-- Verifying that A0 = N mod 12 for every N
-- Comparing the divisibility chain of the clock with the foundation relation of the (25, 12) system
+# 1-based cycle algebra
+c = Cycle(q=12, p=25)
+c.position(13)            # 1     : 13 becomes 1, never 0
+c.position(12)            # 12    : 12 is end, not beginning
+c.cycles(25)              # 2     : two complete cycles
+c.index(24)               # 0     : the smallest coefficient, may be 0
 
-## Interactive document
+# Diophantine ladder
+[(p.a, p.b) for p in ladder(500, 25, 12)]
+# [(8, 25), (20, 0)]      : exactly two representations
+frobenius(25, 12)         # 263   : largest non-representable N
+representation_count(500, 25, 12)   # 2
 
-Alongside this paper there is an HTML document that brings the whole structure to life:
+# Clock cascade
+s = decompose_ms(45_296_789)
+format_stamp(s)           # '0 d 12:34:56.789'
+compose_ms(s)             # 45_296_789  : round-trip holds
+dial_hour(0)              # 12    : 0-based internally, 1-based on the dial
+dial_hour(13)             # 1
 
-- Five layers that all show the same number, and update each other instantly when you change one of them
-- Two sliders: one for a full month (30 days), and one that ends on 12:34:56.789
-- A play button that lets time advance at four speeds, from true speed up to one day per second
-- Visible carry arrows that light up when a layer reaches its maximum and pushes through to the next
+# Bridge to 0-based consumers
+to_zero_based(12, 12)     # 0
+from_zero_based(0, 12)    # 12
+```
 
-The document is available in both English and Dutch.
+CLI
 
-**Live demo:** https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/
+```bash
+$ python -m rd 45296789 --ms
+0 d 12:34:56.789
+
+$ python -m rd 500 --system 25,12
+R(500) = 2
+  (8, 25)
+  (20, 0)
+
+$ python -m rd 263 --system 25,12
+geen representatie voor N=263 in (25,12)      # Frobenius
+```
 
 ---
 
-## Companion work
+The branchless claim
 
-This paper is the conceptual counterpart to a pattern paper on deterministic decomposition. Where this paper examines a system whose uniqueness comes from a hierarchical divisibility chain with bounded coefficients, the companion paper shows a system whose structure comes from a single anchor value and a closed rule for splitting any integer across five layers.
+The RDSI paper shows that a 0-based model needs six conditional branches to be correct at every boundary (12, 24, 36, ...), while a 1-based model p ≡ 1 (mod q) needs none. The comparison was run for q = 7, 9, 12, 24, 60.
 
-**The D³ Pattern: Deterministic Data Decomposition by A-C Coupling**
+That claim is not asserted here. It is a CI gate. Every push runs:
 
-- Repository: https://github.com/A19dammer91/D3-by-A-C-Coupling-Demo
-- Live demo: https://a19dammer91.github.io/D3-by-A-C-Coupling-Demo/
-- DOI: https://doi.org/10.5281/zenodo.20819940
+```bash
+pytest tests/test_branchless.py -v --no-cov
+```
 
-Read together, the two papers frame a single question: what does it mean for a representation system to be complete, and what does it cost to give up multiplicity in exchange for uniqueness?
+which parses the AST of the hot-path functions and fails if any if, ternary, or and/or appears:
+
+Function File Branches in path
+Cycle.index cycle.py 0
+Cycle.position cycle.py 0
+Cycle.cycles cycle.py 0
+Cycle.decompose cycle.py 0
+Cycle.transition_count cycle.py 0
+dial_hour cascade.py 0
+to_zero_based adapters.py 0
+from_zero_based adapters.py 0
+
+Guards (raise in __post_init__, system validation in ladder.py) are excluded: they run at the edge, not in the path.
+
+If someone later tries to fix a corner case by adding an if in Cycle.position, the build turns red.
 
 ---
 
-## Related work
+The four invariants
 
-This paper is part of a series on linear Diophantine representation systems with p ≡ 1 (mod q):
+The RDSI paper records four hard properties that can be checked directly as tests:
 
-- 19 9 system: https://doi.org/10.5281/zenodo.19474707
-- 25 12 system and clock structure comparison: this repository
+Property What is checked
+Foundation For every N from 264 onward, the smallest A equals N mod 12
+Ladder holds Every pair on the ladder satisfies 25A + 12B = N and B >= 0
+Clock uniqueness Decomposing after composing returns the original value
+Transition After position 12 comes position 1 with one extra cycle; position 0 never occurs
 
-## License
+All four pass in the reference implementation, for the ranges the paper describes.
 
-Released under Creative Commons Attribution NonCommercial ShareAlike 4.0 (CC BY NC SA 4.0).
+---
 
+Repository structure
+
+```
+.
+├── RDSI.pdf                     # Representation, Domain Modelling and Software Implementation
+├── Clock_Structure.pdf          # The Clock [3600,60,1] and the (25,12)-System
+├── README.md                    # this file
+├── pyproject.toml               # PEP 621 metadata, hatchling build
+├── .github/workflows/
+│   └── ci.yml                   # test, lint, type, branchless gate
+├── src/rd/
+│   ├── cycle.py                 # 1-based cycle algebra
+│   ├── ladder.py                # Diophantine ladder and Frobenius number
+│   ├── cascade.py               # clock decomposition and display layer
+│   ├── adapters.py              # 0-based to 1-based bridge
+│   └── __main__.py              # CLI
+├── tests/
+│   ├── test_foundation.py       # A0 = N mod 12 for all N >= 264
+│   ├── test_ladder.py           # every pair satisfies 25A + 12B = N
+│   ├── test_cascade.py          # round-trip uniqueness
+│   ├── test_transition.py       # position never 0
+│   └── test_branchless.py       # AST branch counter
+├── code/                        # standalone verification scripts
+├── figures/                     # figures used in the papers
+└── docs/                        # interactive HTML demo
+```
+
+---
+
+Running locally
+
+```bash
+git clone https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour
+cd the-exact-algebraic-condition-for-clock-behaviour
+
+# Linux / macOS
+python -m venv .venv && source .venv/bin/activate
+
+# Windows (PowerShell)
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+
+pip install -e ".[dev]"
+
+pytest                                        # full suite
+pytest -m "not slow"                          # fast feedback
+ruff check src tests && mypy                  # lint and types
+pytest tests/test_branchless.py -v --no-cov   # the gate
+```
+
+---
+
+The most beautiful time a clock can show
+
+12:34:56.789
+
+Digits 1 through 9, in order. A lucky hit of the decimal system and the 24-hour division.
+
+In the interactive demo there is a slider that ends exactly on that time: 45,296,789 milliseconds. Drag it all the way right and land on 12 hours, 34 minutes, 56 seconds, and 789 thousandths.
+
+It is not a mathematical necessity. It is a tribute to the structure.
+
+---
+
+Papers
+
+This repository accompanies four Zenodo records.
+
+Paper Role DOI
+RDSI: Representation, Domain Modelling and Software Implementation The index paper. Introduces the representational choice p ≡ 1 (mod q), the ladder, and the software implementation. 10.5281/zenodo.23077746
+The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison Structural comparison. Proves that positional divisibility and the modular condition are incompatible by design. 10.5281/zenodo.22804148
+The 19-9 System: N = 19A + 9B Companion Diophantine structure. Same core relation, smaller coefficients. 10.5281/zenodo.19474707
+The D³ Pattern: Deterministic Data Decomposition by A-C Coupling Companion pattern paper. A single anchor value and a closed rule across five layers. 10.5281/zenodo.20819940
+
+The 19-9 system shares the same core, p ≡ 1 (mod q), with the (25,12) system. Scaling from (19,9) to (25,12) moves the Frobenius number from 143 to 263 and the structural period pq from 171 to 300. The anchor family, the first run of q consecutive representable integers, starts at 144 and 264 respectively and grows from 9 to 12 integers.
+
+---
+
+Citation
+
+```bibtex
+@misc{elissaoui2026rdsi,
+  title     = {Representation, Domain Modelling and Software Implementation},
+  author    = {El Issaoui, Bilal},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23077746},
+  url       = {https://doi.org/10.5281/zenodo.23077746}
+}
+
+@misc{elissaoui2026clock,
+  title     = {The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison},
+  author    = {El Issaoui, Bilal},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.22804148},
+  url       = {https://doi.org/10.5281/zenodo.22804148}
+}
+
+@misc{elissaoui2026nineteen,
+  title     = {The 19-9 System: N = 19A + 9B},
+  author    = {El Issaoui, Bilal},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.19474707},
+  url       = {https://zenodo.org/records/19474707}
+}
+```
+
+---
+
+License
+
+Released under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 (CC BY-NC-SA 4.0).
 Commercial use is not covered by this license.
 
-## Contact
+---
 
-Bilal El Issaoui
-elissa.oui.amster@gmail.com
-elissa.oui@outlook.com
+Contact
 
-Or open an issue or start a discussion in this repository.
+Bilal El Issaoui, Independent Researcher, Amsterdam
+elissa.oui.amster@gmail.com · elissa.oui@outlook.com
+
+Or open an issue or start a discussion.
+
+```
