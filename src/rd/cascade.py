@@ -1,11 +1,9 @@
 """Clock cascade: positional divisibility chain [days, 24, 60, 60, 1000].
 
-The clock is *internally* 0-based (hours 0..23, minutes 0..59, ...).
-That is correct for a positional system and it is what makes the
-decomposition unique. The 1-based model only applies to the *dial*,
-which is a display layer, not an arithmetic one.
-
-See §4.1 and §5.3 of the paper.
+The clock is internally 0-based (hours 0..23, minutes 0..59, ...). That
+is correct for a positional system and it is what makes the
+decomposition unique. The 1-based model only applies to the dial, which
+is a display layer, not an arithmetic one.
 """
 from __future__ import annotations
 
@@ -33,8 +31,8 @@ MS_DAY = 86_400_000
 class Stamp:
     """A decomposed timestamp.
 
-    ``hours``, ``minutes``, ``seconds`` are 0-based (positional).
-    Use :func:`dial_hour` for the 1-based dial representation.
+    hours, minutes, seconds are 0-based (positional). Use dial_hour()
+    for the 1-based dial representation.
     """
 
     days: int
@@ -55,10 +53,10 @@ class Stamp:
 
 
 def decompose_ms(t: int) -> Stamp:
-    """Milliseconds since midnight → :class:`Stamp`.
+    """Milliseconds since midnight to Stamp.
 
-    For ``t = 45_296_789`` this returns ``0 d 12:34:56.789``, as in §5.4.
-    Negative ``t`` is allowed and yields negative ``days``.
+    For t = 45_296_789 this returns 0 d 12:34:56.789.
+    Negative t is allowed and yields negative days.
     """
     d, r = divmod(t, MS_DAY)
     h, r = divmod(r, MS_HOUR)
@@ -68,7 +66,7 @@ def decompose_ms(t: int) -> Stamp:
 
 
 def compose_ms(s: Stamp) -> int:
-    """Inverse of :func:`decompose_ms`."""
+    """Inverse of decompose_ms."""
     return (
         s.days * MS_DAY
         + s.hours * MS_HOUR
@@ -81,16 +79,16 @@ def compose_ms(s: Stamp) -> int:
 def dial_hour(h24: int) -> int:
     """12-hour dial position, 1..12. Never returns 0.
 
-    ``0 -> 12``, ``1 -> 1``, ``12 -> 12``, ``13 -> 1``, ``23 -> 11``.
-    Branch-free, verified by ``tests/test_branchless.py``.
+    0 -> 12, 1 -> 1, 12 -> 12, 13 -> 1, 23 -> 11.
+    Branch-free, verified by tests/test_branchless.py.
     """
     return (h24 - 1) % 12 + 1
 
 
 def format_stamp(s: Stamp) -> str:
-    """``0 d 12:34:56.789`` — the readable form from §4.3.
+    """Readable form: 0 d 12:34:56.789.
 
-    The hour field uses the 1-based dial, so ``0`` shows as ``12``.
+    The hour field uses the 1-based dial, so 0 shows as 12.
     """
     return (
         f"{s.days} d "
