@@ -20,7 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from rd.ladder import ladder, representation_count  # noqa: E402
+from rd.ladder import ladder, representation_count
 
 
 def brute_force_count(n: int, p: int, q: int) -> int:

@@ -5,7 +5,6 @@ import pytest
 
 from rd.__main__ import main
 
-
 # ---------------------------------------------------------------- ms mode
 
 def test_ms_mode(capsys: pytest.CaptureFixture[str]) -> None:

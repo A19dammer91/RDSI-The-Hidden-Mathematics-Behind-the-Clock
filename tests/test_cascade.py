@@ -17,7 +17,6 @@ from rd.cascade import (
     format_stamp,
 )
 
-
 # --------------------------------------------------------- constants
 
 def test_constants() -> None:

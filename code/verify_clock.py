@@ -21,7 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from rd.cascade import (  # noqa: E402
+from rd.cascade import (
     MS_DAY,
     compose_ms,
     decompose_ms,
@@ -88,7 +88,7 @@ def run(days: int, random_n: int, quiet: bool) -> int:
         return 1
 
     print(f"OK  round-trip for every T in [0, {total}) ({total} values)")
-    print(f"OK  dial_hour in 1..12 for all 24 hours")
+    print("OK  dial_hour in 1..12 for all 24 hours")
     if random_n:
         print(f"OK  {random_n} random instants round-trip")
     print(f"OK  worked example: {format_stamp(decompose_ms(WORKED_EXAMPLE))}")

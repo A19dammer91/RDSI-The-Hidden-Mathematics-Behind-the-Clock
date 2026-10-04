@@ -5,7 +5,6 @@ import pytest
 
 from rd.adapters import from_zero_based, to_zero_based
 
-
 # ------------------------------------------------------- from_zero_based
 
 @pytest.mark.parametrize("zero,expected", [

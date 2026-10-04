@@ -26,7 +26,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from rd.cycle import Cycle  # noqa: E402
+from rd.cycle import Cycle
 
 DEFAULT_Q = [7, 9, 12, 24, 60]
 

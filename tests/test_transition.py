@@ -5,7 +5,6 @@ import pytest
 
 from rd.cycle import Cycle, Decomposition
 
-
 # ------------------------------------------------------------ oracle
 
 def oracle_position(t: int, q: int) -> int:

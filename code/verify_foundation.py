@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from rd.ladder import frobenius, ladder  # noqa: E402
+from rd.ladder import frobenius, ladder
 
 P = 25
 Q = 12
