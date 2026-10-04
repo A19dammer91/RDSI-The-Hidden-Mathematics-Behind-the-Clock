@@ -1,4 +1,5 @@
 """Every public name in the package must be importable from rd."""
+
 from __future__ import annotations
 
 import rd
@@ -16,8 +17,17 @@ def test_all_names_resolve() -> None:
 
 def test_expected_public_api() -> None:
     expected = {
-        "Cycle", "Decomposition", "Pair", "Stamp",
-        "compose_ms", "decompose_ms", "dial_hour", "format_stamp",
-        "from_zero_based", "ladder", "representation_count", "to_zero_based",
+        "Cycle",
+        "Decomposition",
+        "Pair",
+        "Stamp",
+        "compose_ms",
+        "decompose_ms",
+        "dial_hour",
+        "format_stamp",
+        "from_zero_based",
+        "ladder",
+        "representation_count",
+        "to_zero_based",
     }
     assert expected.issubset(set(rd.__all__))

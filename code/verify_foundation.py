@@ -10,6 +10,7 @@ Exit code 0 on success, 1 on any failure.
 Usage:
     python code/verify_foundation.py [--max N] [--quiet]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -42,9 +43,7 @@ def run(max_n: int, quiet: bool) -> int:
             failures.append(f"N={n} has no representation")
             continue
         if pairs[0].a != n % Q:
-            failures.append(
-                f"N={n}: smallest A is {pairs[0].a}, expected {n % Q}"
-            )
+            failures.append(f"N={n}: smallest A is {pairs[0].a}, expected {n % Q}")
             continue
         checked += 1
         if not quiet and checked % 10_000 == 0:
@@ -58,8 +57,7 @@ def run(max_n: int, quiet: bool) -> int:
             print(f"  ... and {len(failures) - 20} more", file=sys.stderr)
         return 1
 
-    print(f"OK  foundation holds for every N in [{FIRST}, {max_n}] "
-          f"({checked} values)")
+    print(f"OK  foundation holds for every N in [{FIRST}, {max_n}] ({checked} values)")
     print(f"OK  frobenius({P}, {Q}) = {FROBENIUS}")
     print(f"OK  N = {FROBENIUS} has no representation")
     return 0
@@ -67,10 +65,13 @@ def run(max_n: int, quiet: bool) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--max", type=int, default=200_000,
-                   help="upper bound for the sweep (default: 200000)")
-    p.add_argument("--quiet", action="store_true",
-                   help="suppress progress output")
+    p.add_argument(
+        "--max",
+        type=int,
+        default=200_000,
+        help="upper bound for the sweep (default: 200000)",
+    )
+    p.add_argument("--quiet", action="store_true", help="suppress progress output")
     args = p.parse_args(argv)
     return run(args.max, args.quiet)
 

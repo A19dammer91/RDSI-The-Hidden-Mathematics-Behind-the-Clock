@@ -18,6 +18,7 @@ Exit code 0 on success, 1 on any failure.
 Usage:
     python code/compare_oracle.py [--steps N] [--q 7 9 12 24 60]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -62,8 +63,10 @@ def one_based(t: int, q: int) -> int:
 
 
 def run(steps: int, qs: list[int]) -> int:
-    print(f"{'q':>3} | {'impl':<20} | {'label err':>9} | "
-          f"{'trans err':>9} | {'branches':>8}")
+    print(
+        f"{'q':>3} | {'impl':<20} | {'label err':>9} | "
+        f"{'trans err':>9} | {'branches':>8}"
+    )
     print("-" * 62)
 
     any_fail = False
@@ -78,9 +81,9 @@ def run(steps: int, qs: list[int]) -> int:
             oracle_trans.append((t - 1) // q)
 
         impls = [
-            ("0-based plain",     zero_plain,     0, False),
+            ("0-based plain", zero_plain, 0, False),
             ("0-based corrected", zero_corrected, 1, False),
-            ("1-based",           one_based,      0, True),
+            ("1-based", one_based, 0, True),
         ]
 
         for name, fn, branches, count_trans in impls:
@@ -91,14 +94,12 @@ def run(steps: int, qs: list[int]) -> int:
                 want = oracle_labels[t - 1]
                 if got != want:
                     label_err += 1
-                if (
-                    count_trans
-                    and c.transition_count(t) != oracle_trans[t - 1]
-                ):
+                if count_trans and c.transition_count(t) != oracle_trans[t - 1]:
                     trans_err += 1
 
-            print(f"{q:>3} | {name:<20} | {label_err:>9} | "
-                  f"{trans_err:>9} | {branches:>8}")
+            print(
+                f"{q:>3} | {name:<20} | {label_err:>9} | {trans_err:>9} | {branches:>8}"
+            )
 
             if name.startswith("1-based") and label_err:
                 any_fail = True
@@ -115,14 +116,22 @@ def run(steps: int, qs: list[int]) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--steps", type=int, default=2_000,
-                   help="how many T values to compare (default: 2000)")
-    p.add_argument("--q", type=int, nargs="+", default=DEFAULT_Q,
-                   help="cycle lengths to test (default: 7 9 12 24 60)")
+    p.add_argument(
+        "--steps",
+        type=int,
+        default=2_000,
+        help="how many T values to compare (default: 2000)",
+    )
+    p.add_argument(
+        "--q",
+        type=int,
+        nargs="+",
+        default=DEFAULT_Q,
+        help="cycle lengths to test (default: 7 9 12 24 60)",
+    )
     args = p.parse_args(argv)
     return run(args.steps, args.q)
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

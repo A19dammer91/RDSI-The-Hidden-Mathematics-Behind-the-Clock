@@ -5,6 +5,7 @@ is correct for a positional system and it is what makes the
 decomposition unique. The 1-based model only applies to the dial, which
 is a display layer, not an arithmetic one.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -36,10 +37,10 @@ class Stamp:
     """
 
     days: int
-    hours: int      # 0..23
-    minutes: int    # 0..59
-    seconds: int    # 0..59
-    millis: int     # 0..999
+    hours: int  # 0..23
+    minutes: int  # 0..59
+    seconds: int  # 0..59
+    millis: int  # 0..999
 
     def __post_init__(self) -> None:
         if not 0 <= self.hours < 24:
