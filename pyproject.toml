@@ -1,20 +1,24 @@
 [build-system]
-requires = ["hatchling>=1.24"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "rd"
-version = "0.1.0"
+name = "rdsi"
+version = "1.0.0"
 description = "Representation Domain: 1-based cycle algebra, Diophantine ladder, and clock cascade."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "CC-BY-NC-SA-4.0" }
+license = "CC-BY-NC-SA-4.0"
+license-files = ["LICENSE"]
 authors = [{ name = "Bilal El Issaoui", email = "a19dammer91@users.noreply.github.com" }]
 keywords = ["diophantine", "modular-arithmetic", "clock", "representation", "off-by-one"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
+  "Intended Audience :: Education",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -33,18 +37,20 @@ dev = [
 ]
 
 [project.scripts]
-rd = "rd.__main__:main"
+rdsi = "rd.__main__:main"
 
 [project.urls]
-Homepage = "https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour"
+Homepage = "https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock"
 Paper = "https://doi.org/10.5281/zenodo.23077746"
-Changelog = "https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/releases"
+Demo = "https://a19dammer91.github.io/RDSI-The-Hidden-Mathematics-Behind-the-Clock/"
+Issues = "https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/issues"
+Changelog = "https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/releases"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rd"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/rd", "tests", "README.md", "CITATION.cff", "LICENSE"]
+include = ["src/rd", "tests", "code", "README.md", "CITATION.cff", "LICENSE"]
 
 # ---------------------------------------------------------------- pytest
 [tool.pytest.ini_options]
@@ -53,8 +59,8 @@ addopts = "-ra --strict-markers --strict-config"
 testpaths = ["tests"]
 pythonpath = ["src"]
 markers = [
-  "slow: tests die >1s duren (Frobenius-sweep, 200k clock-sweep)",
-  "invariant: harde invarianten uit het RDSI paper",
+  "slow: exhaustive sweeps that take a long time (Frobenius sweep, full-day clock sweep)",
+  "invariant: hard invariants from the RDSI paper",
 ]
 
 # ---------------------------------------------------------------- coverage
@@ -84,7 +90,6 @@ select = ["E", "F", "W", "I", "N", "UP", "B", "C4", "SIM", "RUF"]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
 "code/*" = ["E402"]
 
 [tool.ruff.lint.isort]
