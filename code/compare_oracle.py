@@ -91,9 +91,11 @@ def run(steps: int, qs: list[int]) -> int:
                 want = oracle_labels[t - 1]
                 if got != want:
                     label_err += 1
-                if count_trans:
-                    if c.transition_count(t) != oracle_trans[t - 1]:
-                        trans_err += 1
+                if (
+                    count_trans
+                    and c.transition_count(t) != oracle_trans[t - 1]
+                ):
+                    trans_err += 1
 
             print(f"{q:>3} | {name:<20} | {label_err:>9} | "
                   f"{trans_err:>9} | {branches:>8}")
@@ -123,3 +125,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+  
