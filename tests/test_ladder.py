@@ -156,4 +156,4 @@ def test_count_matches_brute_force() -> None:
     for n in range(0, 5_001):
         assert representation_count(n, P, Q) == brute_force_count(n, P, Q), \
             f"count mismatch at N={n}"
-        
+

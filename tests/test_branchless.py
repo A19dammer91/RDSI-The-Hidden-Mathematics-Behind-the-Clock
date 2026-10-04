@@ -130,4 +130,4 @@ def test_counter_still_counts_guard_lookalikes() -> None:
 
     assert count_branches(with_else) == 1
     assert count_branches(with_work_in_body) == 1
-    
+

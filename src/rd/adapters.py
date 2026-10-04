@@ -48,4 +48,4 @@ def from_zero_based(zero: int, q: int) -> int:
     if q < 1:
         raise ValueError(f"q >= 1 required, got q={q}")
     return (zero - 1) % q + 1
-    
+
