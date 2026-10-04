@@ -22,7 +22,7 @@ from collections.abc import Callable
 import pytest
 
 from rd.adapters import from_zero_based, to_zero_based
-from rd.cascade import dial_hour
+from rd.cascade import compose_ms, decompose_ms, dial_hour
 from rd.cycle import Cycle
 
 
@@ -57,6 +57,8 @@ BRANCHLESS_CORE: list[tuple[str, Callable[..., object]]] = [
     ("Cycle.cycles", Cycle.cycles),
     ("Cycle.decompose", Cycle.decompose),
     ("Cycle.transition_count", Cycle.transition_count),
+    ("decompose_ms", decompose_ms),
+    ("compose_ms", compose_ms),
     ("dial_hour", dial_hour),
     ("to_zero_based", to_zero_based),
     ("from_zero_based", from_zero_based),
