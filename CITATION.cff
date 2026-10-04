@@ -1,6 +1,8 @@
-cff-version: 2.0.0
+cff-version: 1.2.0
 message: "If you use this work, please cite it as below."
 title: "RDSI: The Hidden Mathematics Behind the Clock"
+version: 1.0.0
+date-released: 2026-10-04
 abstract: >
   The RDSI repository accompanies a series of papers on linear Diophantine
   representation systems with the foundation relation p ≡ 1 (mod q).
@@ -22,10 +24,9 @@ authors:
   - family-names: El Issaoui
     given-names: Bilal
     affiliation: Independent Researcher, Amsterdam
-year: 2026
 doi: 10.5281/zenodo.23077746
 url: https://doi.org/10.5281/zenodo.23077746
-repository-code: https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour
+repository-code: https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock
 license: CC-BY-NC-SA-4.0
 keywords:
   - linear Diophantine equations
