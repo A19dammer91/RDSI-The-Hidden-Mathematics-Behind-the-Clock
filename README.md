@@ -1,149 +1,135 @@
 # RDSI: The Hidden Mathematics Behind the Clock
 
-**Representation, Domain Modelling and Software Implementation.**
+**How a huge number becomes something you can read, and why one small choice, counting from 1 instead of 0, removes a whole family of bugs.**
 
-**Two Diophantine structures, two purposes, and a Python package that implements both.**
-
-[![CI](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/actions/workflows/ci.yml/badge.svg)](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/actions/workflows/ci.yml)
-[![branchless core](https://img.shields.io/badge/branchless%20core-enforced-success)](#the-branchless-claim)
+[![CI](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml/badge.svg)](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml)
+[![no special cases in the core](https://img.shields.io/badge/branchless%20core-enforced-success)](#no-special-cases-needed)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)](LICENSE)
 
-📘 **[RDSI: Representation, Domain Modelling and Software Implementation](https://doi.org/10.5281/zenodo.23077746)**
-📄 **[The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison](https://doi.org/10.5281/zenodo.22804148)**
-🧮 **[The 19-9 System: N = 19A + 9B](https://zenodo.org/records/19474707)**
-🔗 **[Interactive demo](https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/)**
-🧪 **[Companion: D³ Pattern](https://github.com/A19dammer91/D3-by-A-C-Coupling-Demo)**
+[📘 **Main paper**](https://doi.org/10.5281/zenodo.23077746) ·
+[📄 **Clock paper**](https://doi.org/10.5281/zenodo.22804148) ·
+[🔗 **Interactive demo**](https://a19dammer91.github.io/RDSI-The-Hidden-Mathematics-Behind-the-Clock/) ·
+[📋 **How to cite**](#how-to-cite)
 
 ---
 
-## Start here: one question
+## The question
 
-A stopwatch has been running for **45,296,789 milliseconds**. What does the display say?
-
-Anyone who has used a stopwatch knows the answer without thinking:
+A stopwatch has been running for **45,296,789 milliseconds**. What does it show?
 
 > **12:34:56.789**
 
-But almost nobody can explain **how** you get there. Why 12 and not 11? Why does a clock jump back after 59 seconds, and not after 60 or 100?
+Everyone can read a stopwatch. Almost nobody can say *how* the number turns into that display. Why does the clock wrap around after 59 seconds, and not after 60 or 100? Why is there an hour 12 but no hour 0?
 
-This repository answers that question. It ships three things:
+This project answers those questions with simple examples, working code and checks you can run yourself. It contains:
 
-1. **Three papers** that together analyse the clock, compare it to a plain Diophantine system, and generalise the underlying pattern.
-2. **A Python package** (`rd`, *Representation Domain*) that implements the cycle algebra, the Diophantine ladder, and the clock cascade.
-3. **An interactive demo** where you can drag five layers and watch them carry.
+- **Papers** that explain the clock and compare it with a different kind of number puzzle
+- **A small Python library** (`rd`) with no extra dependencies
+- **An interactive demo** where you drag a slider and watch the units carry over
 
----
+## Quick start
 
-## The everyday example: money
+```bash
+git clone https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock
+cd RDSI-The-Hidden-Mathematics-Behind-the-Clock
+pip install -e ".[dev]"
 
-Imagine notes of **€25 and €12**. Pay exactly **€575**. How many ways are there?
+python -m rd 45296789 --ms
+# 0 d 12:34:56.789
+```
 
-Two:
-
-- 11 × €25 + 25 × €12
-- 23 × €25 + 0 × €12
-
-No others. That is a **linear Diophantine equation**:
-
-> N = 25·A + 12·B
-
-The reason two answers exist comes from a single relation:
-
-> **25 ≡ 1 (mod 12)**
-
-Because of that relation, the smallest €25 count is one step: `A₀ = N mod 12`. Every other solution is reached by stepping `+12` in `A` and `−25` in `B`. That ordered family is called the **ladder**.
-
-The smallest representable number is **264 = 24 · 11**. The largest number that cannot be represented at all is **263**. From 264 onward, every integer has at least one representation.
-
-The RDSI paper uses `N = 500` as its worked example. There, `ladder(500, 25, 12)` gives `(8, 25)` and `(20, 0)`.
-
-At the other extreme stands the clock.
+You need Python 3.10 or newer.
 
 ---
 
-## The clock uses a different Diophantine structure
+## Example 1: the stopwatch
 
-Same equation shape, entirely different behaviour:
+Take 45,296,789 milliseconds and peel off one unit at a time:
 
-> T = 3600·H + 60·M + S
-
-But the clock gives **exactly one** answer, not a ladder. Two reasons:
-
-**1. Hierarchical divisibility.** Every base is an exact multiple of the next:
-
-> 1000 ms → 1 s → 60 s → 1 min → 60 min → 1 h → 24 h → 1 day
-
-**2. Bounded coefficients.** Seconds and minutes stay `< 60`, hours stay `< 24`.
-
-Remove either property, and uniqueness collapses.
-
-### Side by side
-
-| | (25, 12) system | Clock `[3600, 60, 1]` |
+| Step | Calculation | Result |
 |---|---|---|
-| Type | Linear Diophantine | Linear Diophantine |
-| Base relation | One foundation relation: `25 ≡ 1 (mod 12)` | Each base divides the next |
-| Coefficient bounds | none | `< 60`, `< 60`, `< 24` |
-| Number of solutions | multiple, ordered as a ladder | exactly one |
-| Frobenius number | **263** | none, every instant is representable |
-| Source of structure | A single residue relation | A hierarchical divisibility chain |
-| Purpose | explore multiplicity | guarantee uniqueness |
+| Whole hours | 45,296,789 ÷ 3,600,000 | **12** hours, remainder 2,096,789 |
+| Whole minutes | 2,096,789 ÷ 60,000 | **34** minutes, remainder 56,789 |
+| Whole seconds | 56,789 ÷ 1,000 | **56** seconds, remainder 789 |
+| Left over | | **789** milliseconds |
 
-A clock is not a weaker Diophantine system. It is a different one, built on purpose.
+Result: **12:34:56.789**. Running it backwards (12 h + 34 min + 56 s + 789 ms) gives exactly 45,296,789 again.
 
-The RDSI paper proves that the modular condition `p ≡ 1 (mod q)` and positional divisibility are **structurally incompatible**. The clock does not fail to be Diophantine; it is designed not to be.
+The important part: **there is only one right answer.** No other combination of hours, minutes and seconds gives the same total, as long as minutes and seconds stay below 60 and hours below 24.
 
----
+## Example 2: paying with €25 and €12 notes
 
-## The representational choice: 0-based or 1-based
+Now a different puzzle. You have notes of **€25** and **€12**, and you want to pay exactly **€575**. How many ways are there?
 
-This is the core insight of the RDSI paper.
+Exactly two:
 
-Almost every cycle in software today is modelled 0-based: positions run from 0 up to and including `q − 1`. That looks neutral, but it causes a structural problem: the value that marks the **end** of the cycle is at the same time the value of the **beginning**. Midnight is both the end of the day and the start of the next. Developers know the consequences as off-by-one errors.
+- 11 notes of €25 and 25 notes of €12
+- 23 notes of €25 and no notes of €12
 
-The RDSI paper shows that the choice between `p ≡ 0 (mod q)` and `p ≡ 1 (mod q)` is not an arithmetic choice, it is a **representational** one. The arithmetic stays identical. The model changes.
+Unlike the clock, this puzzle has **several** answers. It behaves neatly because 25 is exactly one more than 2 × 12, so 25 ≡ 1 (mod 12). Because of that single fact:
 
-| Number T | Model 0 to 11 | Model 1 to 12 |
-|---|---|---|
-| 12 | position 0, called "beginning" | position 12, the end of the cycle |
-| 13 | position 1 | position 1, after one transition |
-| 24 | position 0: end and beginning at once | position 12: end only |
-| 25 | position 1 | position 1, after two complete cycles |
+- The smallest number of €25 notes you need is simply **the remainder of the amount divided by 12**. For €575 that is 575 ÷ 12 = 47 remainder 11, so **11 notes**.
+- Every other way to pay is found by adding 12 more €25 notes and giving back 25 of the €12 notes. In the library this list of all possible ways is called the **ladder**.
 
-With `p ≡ 1 (mod q)`, the transition from one cycle to the next becomes the **formal heart** of the model, not a by-product of the division. The number 0 never occurs as a position. There is no hour 0; that is hour 12. Hour 13 is hour 1.
+Two more facts worth knowing:
 
-### The same cycle, written two ways
+- **263** is the largest amount you can never pay with these notes.
+- From **264** onwards, every amount can be paid in at least one way.
 
-| Operation | 0-based | 1-based |
-|---|---|---|
-| position of T | `T mod q` | `(T − 1) mod q + 1` |
-| cycles elapsed | `T div q` | `(T − 1) div q` |
-| transition count | `T div q` | `T div q` |
-
-Both columns give the same arithmetic result. Only the second column keeps end and beginning separate.
+A smaller one to try by hand: for €500 the two ways are 8 × €25 + 25 × €12, and 20 × €25 + 0 × €12.
 
 ---
+
+## Why the clock has one answer and the notes have several
+
+Both puzzles have the same shape (add up multiples of some numbers), but they are built for opposite goals.
+
+| | €25 / €12 notes | Clock (hours, minutes, seconds) |
+|---|---|---|
+| Goal | explore every possible combination | guarantee exactly one answer |
+| Why it works | 25 is one more than a multiple of 12 | every unit divides evenly into the next |
+| Limits on each unit | none | seconds and minutes below 60, hours below 24 |
+| Number of answers | several (the ladder) | exactly one |
+| Amounts that cannot be made | up to 263 | none, every moment can be shown |
+
+A clock is not a weaker version of the notes puzzle. It is a different design with a different goal. The Clock paper shows that you cannot have both properties in the same system.
+
+## Counting from 1 instead of 0
+
+This is the central idea of the main paper.
+
+Most software counts positions in a cycle from 0: for a 12-hour dial, positions 0 to 11. That looks harmless, but it causes a real problem. **The end of one cycle and the start of the next get the same number.** Midnight is both the end of one day and the start of the next. Programmers know the result as the "off-by-one error".
+
+Counting 1 to 12 instead is not just a matter of taste. It keeps the end and the start apart:
+
+| Number | Counting 0 to 11 | Counting 1 to 12 |
+|---|---|---|
+| 12 | position 0, which is "the beginning" | position 12, the end of the cycle |
+| 13 | position 1 | position 1, after one full cycle |
+| 24 | position 0, end and beginning at once | position 12, the end only |
+| 25 | position 1 | position 1, after two full cycles |
+
+This is why a clock face has no hour 0: after 12 comes 1.
+
+The same calculation, written both ways:
+
+| | Counting from 0 | Counting from 1 |
+|---|---|---|
+| Position of number T | `T mod q` | `(T − 1) mod q + 1` |
+| Full cycles completed | `T div q` | `(T − 1) div q` |
+
+Here `q` is the length of the cycle (for example 12), and `mod` and `div` are the remainder and the whole-number part of a division.
 
 ## Why this matters
 
-- **Time, files, coordinates.** Everywhere one big number becomes something readable (45,296,789 ms → `12:34:56.789`, 1,234,567 bytes → `1.23 MB (SI) / 1.18 MiB`, 20260917 → `17 September 2026`), the same layer structure is at work. Timestamp bugs almost always come down to these layers.
-- **Teaching modulo.** Everyone understands *"11 o'clock plus 3 hours is 2 o'clock."* That is `14 mod 12 = 2`. The formula is hard; the clock is not.
-- **A transferable insight.** Every layered system makes one choice: *easy to explore every combination*, or *impossible to be uncertain*. You cannot have both in one structure.
+- **Dates and times.** Whenever a large number becomes something readable, the same layered structure is at work: 45,296,789 ms → `12:34:56.789`, 1,234,567 bytes → `1.23 MB`, 20260917 → `17 September 2026`. Many timestamp bugs come from getting one of these layers wrong.
+- **Teaching.** Everyone understands that 3 hours after 11 o'clock is 2 o'clock. That is the remainder rule (14 mod 12 = 2), and the clock makes it obvious.
+- **A general lesson.** A layered system can be built to *explore all combinations* or to *leave no room for doubt*. It cannot do both at once.
 
 ---
 
-## The `rd` package
-
-`rd` stands for **Representation Domain**. It implements the three representations from the papers in one small, dependency-free library.
-
-### Install
-
-```bash
-pip install -e ".[dev]"      # editable, with test and lint tooling
-```
-
-### Use
+## Using the library
 
 ```python
 from rd.cycle    import Cycle
@@ -151,32 +137,31 @@ from rd.ladder   import ladder, frobenius, representation_count
 from rd.cascade  import decompose_ms, compose_ms, format_stamp, dial_hour
 from rd.adapters import to_zero_based, from_zero_based
 
-# 1-based cycle algebra
+# A 12-step cycle counted from 1
 c = Cycle(q=12, p=25)
-c.position(13)            # 1     : 13 becomes 1, never 0
-c.position(12)            # 12    : 12 is end, not beginning
-c.cycles(25)              # 2     : two complete cycles
-c.index(24)               # 0     : the smallest coefficient, may be 0
+c.position(13)            # 1  : 13 wraps round to 1, never to 0
+c.position(12)            # 12 : 12 is the end of the cycle
+c.cycles(25)              # 2  : two full cycles completed
 
-# Diophantine ladder
+# All ways to pay 500 with 25s and 12s
 [(p.a, p.b) for p in ladder(500, 25, 12)]
-# [(8, 25), (20, 0)]      : exactly two representations
-frobenius(25, 12)         # 263   : largest non-representable N
+# [(8, 25), (20, 0)]      : exactly two ways
 representation_count(500, 25, 12)   # 2
+frobenius(25, 12)                   # 263 : the largest amount that cannot be paid
 
-# Clock cascade
+# The stopwatch
 s = decompose_ms(45_296_789)
 format_stamp(s)           # '0 d 12:34:56.789'
-compose_ms(s)             # 45_296_789  : round-trip holds
-dial_hour(0)              # 12    : 0-based internally, 1-based on the dial
-dial_hour(13)             # 1
+compose_ms(s)             # 45296789 : going back gives the original number
+dial_hour(0)              # 12 : midnight is shown as 12
+dial_hour(13)             # 1  : 1 p.m. is shown as 1
 
-# Bridge to 0-based consumers
+# Converting between "from 1" and "from 0" for other software
 to_zero_based(12, 12)     # 0
 from_zero_based(0, 12)    # 12
 ```
 
-### CLI
+### Command line
 
 ```bash
 $ python -m rd 45296789 --ms
@@ -188,24 +173,24 @@ R(500) = 2
   (20, 0)
 
 $ python -m rd 263 --system 25,12
-geen representatie voor N=263 in (25,12)      # Frobenius
+no representation for N=263 in (25,12)
 ```
+
+The last example is the largest amount that cannot be paid, so there is no answer.
 
 ---
 
-## The branchless claim
+## No special cases needed
 
-The RDSI paper shows that a 0-based model needs **six conditional branches** to be correct at every boundary (12, 24, 36, ...), while a 1-based model `p ≡ 1 (mod q)` needs **none**. The comparison was run for `q = 7, 9, 12, 24, 60`.
+The main paper claims that when you count from 1, the core calculation needs **no special cases at all**. When you count from 0, you need six extra "if this is a boundary, do something different" rules to be correct at every boundary (12, 24, 36 and so on). The comparison was run for cycle lengths 7, 9, 12, 24 and 60.
 
-That claim is not asserted here. It is a **CI gate**. Every push runs:
+This claim is **enforced automatically**. Every time code is pushed, a test reads the source code of the core functions and fails if it finds any `if`, any `x if y else z`, or any `and`/`or`:
 
 ```bash
 pytest tests/test_branchless.py -v --no-cov
 ```
 
-which parses the AST of the hot-path functions and fails if any `if`, ternary, or `and`/`or` appears:
-
-| Function | File | Branches in path |
+| Function | File | Special cases |
 |---|---|---|
 | `Cycle.index` | `cycle.py` | 0 |
 | `Cycle.position` | `cycle.py` | 0 |
@@ -216,100 +201,35 @@ which parses the AST of the hot-path functions and fails if any `if`, ternary, o
 | `to_zero_based` | `adapters.py` | 0 |
 | `from_zero_based` | `adapters.py` | 0 |
 
-Guards (`raise` in `__post_init__`, system validation in `ladder.py`) are excluded: they run at the edge, not in the path.
-
-If someone later tries to fix a corner case by adding an `if` in `Cycle.position`, the build turns red.
+One exception is allowed: an input check that only rejects bad values by raising an error (for example "the cycle length must be at least 1"). It does not take part in the calculation, so it is not counted. Any other `if` added to the core makes the build fail.
 
 ---
 
-## The four invariants
+## How it is checked
 
-The RDSI paper records four hard properties that can be checked directly as tests:
+### Four properties
 
-| Property | What is checked |
+The main paper states four properties. Each one is a test:
+
+| Property | In plain words |
 |---|---|
-| Foundation | For every N from 264 onward, the smallest A equals `N mod 12` |
-| Ladder holds | Every pair on the ladder satisfies `25A + 12B = N` and `B >= 0` |
-| Clock uniqueness | Decomposing after composing returns the original value |
-| Transition | After position 12 comes position 1 with one extra cycle; position 0 never occurs |
+| **Smallest-number rule** | For every amount from 264 upwards, the smallest number of €25 notes equals the amount's remainder when divided by 12. |
+| **Every way adds up** | Every combination in the ladder really adds up to the amount, with no negative counts. |
+| **Clock round trip** | Splitting a number into days, hours, minutes and seconds and putting it back together gives the original number. |
+| **The wrap-around** | After position 12 comes position 1 and one more completed cycle. Position 0 never appears. |
 
-All four pass in the reference implementation, for the ranges the paper describes.
+All four pass for the ranges described in the paper.
 
----
+### Standalone scripts
 
-## Repository structure
+The `code/` folder holds four scripts that re-check these properties. They run straight from the project folder, without installing anything. Each one ends with exit code 0 when everything passes and 1 when something fails.
 
-```
-.
-├── RDSI.pdf                     # Representation, Domain Modelling and Software Implementation
-├── Clock_Structure.pdf          # The Clock [3600,60,1] and the (25,12)-System
-├── README.md                    # this file
-├── CITATION.cff                 # citation metadata
-├── LICENSE                      # CC BY-NC-SA 4.0
-├── pyproject.toml               # PEP 621 metadata, hatchling build
-├── .github/workflows/
-│   └── ci.yml                   # test, lint, type, branchless gate, oracle parity, scripts, build
-├── src/rd/
-│   ├── __init__.py              # package exports
-│   ├── __main__.py              # CLI entry point
-│   ├── cycle.py                 # 1-based cycle algebra
-│   ├── ladder.py                # Diophantine ladder and Frobenius number
-│   ├── cascade.py               # clock decomposition and display layer
-│   └── adapters.py              # 0-based to 1-based bridge
-├── tests/
-│   ├── test_foundation.py       # A0 = N mod 12 for all N >= 264
-│   ├── test_ladder.py           # every pair satisfies 25A + 12B = N
-│   ├── test_cascade.py          # round-trip uniqueness
-│   ├── test_transition.py       # position never 0
-│   └── test_branchless.py       # AST branch counter
-├── code/
-│   ├── verify_foundation.py     # standalone sweep for the foundation relation
-│   ├── verify_ladder.py         # standalone sweep for the ladder
-│   ├── verify_clock.py          # standalone round-trip and dial check
-│   └── compare_oracle.py        # 0-based vs 1-based vs oracle
-└── docs/
-    └── index.html               # interactive demo
-```
-
----
-
-## Running locally
-
-```bash
-git clone https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour
-cd the-exact-algebraic-condition-for-clock-behaviour
-
-# Linux / macOS
-python -m venv .venv && source .venv/bin/activate
-
-# Windows (PowerShell)
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-
-pip install -e ".[dev]"
-
-pytest                                        # full suite
-pytest -m "not slow"                          # fast feedback
-ruff check src tests && mypy                  # lint and types
-pytest tests/test_branchless.py -v --no-cov   # the gate
-```
-
----
-
-## Verification scripts
-
-The `code/` folder contains four standalone scripts that verify the invariants from the RDSI paper. They do not require installing the package: each script adds `src/` to the import path itself, so it runs directly from the repo root.
-
-| Script | What it verifies | Default range |
+| Script | What it checks | Default range |
 |---|---|---|
-| `verify_foundation.py` | For every N from 264 onward, the smallest A equals N mod 12. The Frobenius number 263 has no representation. | 264 to 200,000 |
-| `verify_ladder.py` | Every pair on the ladder satisfies p·A + q·B = N with B at least 0. The fast counter matches a brute-force count. Pairs are ordered and the step size is exactly +q in A and −p in B. | 0 to 5,000 |
-| `verify_clock.py` | Composing after decomposing returns the original value for every instant. Hours stay below 24, minutes and seconds below 60, millis below 1000. The dial is always 1 to 12. The worked example 45,296,789 ms reads as 0 d 12:34:56.789. | 2 days and 200,000 random instants |
-| `compare_oracle.py` | The 1-based model is compared against a step-by-step oracle for q = 7, 9, 12, 24, 60. The script reports how often the plain 0-based model fails at a boundary, how many branches a corrected 0-based model needs, and that the 1-based model needs none. | 2,000 steps per q |
-
-Each script exits with code 0 on success and 1 on failure, so they can be used as a gate in any pipeline.
-
-### Run them
+| `verify_foundation.py` | The smallest-number rule, and that 263 cannot be paid | 264 to 200,000 |
+| `verify_ladder.py` | Every combination adds up, a fast count matches a slow one-by-one count, and the steps are always +12 and −25 | 0 to 5,000 |
+| `verify_clock.py` | The clock round trip, the limits of each unit, the dial always showing 1 to 12, and the 12:34:56.789 example | 2 days and 200,000 random moments |
+| `compare_oracle.py` | Counting from 1 against a slow step-by-step simulation, for cycle lengths 7, 9, 12, 24 and 60 | 2,000 steps each |
 
 ```bash
 python code/verify_foundation.py --max 200000
@@ -318,21 +238,17 @@ python code/verify_clock.py --days 2 --random 200000
 python code/compare_oracle.py --steps 2000
 ```
 
-Every script accepts `--quiet` to suppress progress output. The first three accept a different range or different coefficients through flags. Run any script with `--help` for the full list.
+Add `--quiet` to hide the progress output, or `--help` to see all options.
 
 ### What the comparison shows
 
-The output of `compare_oracle.py` is the numeric form of the branchless claim. For each cycle length `q`, three implementations are compared against an oracle that simulates the cycle step by step, without any formula.
+`compare_oracle.py` produces the numbers behind the "no special cases" claim. For a 12-step cycle:
 
-For `q = 12` the result is:
-
-| Implementation | Label errors | Branches |
+| Method | Wrong results | Special cases needed |
 |---|---|---|
-| 0-based, plain mod | 1/q of all inputs | 0 |
-| 0-based, corrected | 0 | 6 |
-| 1-based, p ≡ 1 (mod q) | 0 | 0 |
-
-The plain 0-based model fails at every boundary (12, 24, 36, ...). Making it correct costs six conditional branches. The 1-based model is correct on every input without any branch.
+| Counting from 0, plain | at every boundary (12, 24, 36, ...) | 0 |
+| Counting from 0, corrected | none | 6 |
+| Counting from 1 | none | 0 |
 
 ---
 
@@ -340,30 +256,84 @@ The plain 0-based model fails at every boundary (12, 24, 36, ...). Making it cor
 
 > **12:34:56.789**
 
-Digits 1 through 9, in order. A lucky hit of the decimal system and the 24-hour division.
+The digits 1 to 9 in order, a lucky meeting of the decimal system and the 24-hour day.
 
-In the [interactive demo](https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/) there is a slider that **ends exactly on that time**: 45,296,789 milliseconds. Drag it all the way right and land on 12 hours, 34 minutes, 56 seconds, and 789 thousandths.
+In the [interactive demo](https://a19dammer91.github.io/RDSI-The-Hidden-Mathematics-Behind-the-Clock/) there is a slider that ends exactly on that moment: 45,296,789 milliseconds. Drag it all the way to the right. It is not a mathematical necessity, just a small tribute to the structure.
 
-It is not a mathematical necessity. It is a tribute to the structure.
+---
+
+## Project layout
+
+```
+.
+├── papers/
+│   ├── RDSI.pdf                 # Main paper
+│   └── Clock_Structure.pdf      # The clock and the (25,12)-system
+├── src/rd/                      # The Python library
+│   ├── __init__.py              # What the library offers
+│   ├── __main__.py              # The command line tool
+│   ├── cycle.py                 # Cycles counted from 1
+│   ├── ladder.py                # All ways to pay an amount, and the largest amount that cannot be paid
+│   ├── cascade.py               # Splitting a number into days, hours, minutes, seconds
+│   └── adapters.py              # Converting between counting from 1 and from 0
+├── tests/                       # Automatic tests
+│   ├── test_foundation.py
+│   ├── test_ladder.py
+│   ├── test_cascade.py
+│   ├── test_transition.py
+│   ├── test_adapters.py
+│   ├── test_cli.py
+│   ├── test_exports.py
+│   └── test_branchless.py       # The "no special cases" check
+├── code/                        # Standalone verification scripts
+│   ├── verify_foundation.py
+│   ├── verify_ladder.py
+│   ├── verify_clock.py
+│   └── compare_oracle.py
+├── docs/
+│   └── index.html               # The interactive demo (published with GitHub Pages)
+├── .github/workflows/ci.yml     # Runs all checks on every push
+├── CITATION.cff                 # How to cite this work
+├── LICENSE                      # CC BY-NC-SA 4.0
+├── pyproject.toml               # Package settings
+└── README.md                    # This file
+```
+
+## Development
+
+```bash
+python -m venv .venv
+source .venv/bin/activate         # Windows (PowerShell): .venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+
+pytest                            # all tests (takes a few minutes)
+pytest -m "not slow"              # quick tests only
+ruff check src tests code         # style check
+ruff format --check src tests code  # formatting check
+mypy src                          # type check
+```
 
 ---
 
 ## Papers
 
-This repository accompanies four Zenodo records.
+The first two are also included as PDFs in the [`papers/`](papers/) folder.
 
-| Paper | Role | DOI |
+| Paper | What it covers | DOI |
 |---|---|---|
-| RDSI: Representation, Domain Modelling and Software Implementation | The index paper. Introduces the representational choice `p ≡ 1 (mod q)`, the ladder, and the software implementation. | [10.5281/zenodo.23077746](https://doi.org/10.5281/zenodo.23077746) |
-| The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison | Structural comparison. Proves that positional divisibility and the modular condition are incompatible by design. | [10.5281/zenodo.22804148](https://doi.org/10.5281/zenodo.22804148) |
-| The 19-9 System: N = 19A + 9B | Companion Diophantine structure. Same core relation, smaller coefficients. | [10.5281/zenodo.19474707](https://zenodo.org/records/19474707) |
-| The D³ Pattern: Deterministic Data Decomposition by A-C Coupling | Companion pattern paper. A single anchor value and a closed rule across five layers. | [10.5281/zenodo.20819940](https://doi.org/10.5281/zenodo.20819940) |
+| RDSI: Representation, Domain Modelling and Software Implementation | The main paper. Counting from 1, the ladder, and the software. | [10.5281/zenodo.23077746](https://doi.org/10.5281/zenodo.23077746) |
+| The Clock [3600,60,1] and the (25,12)-System: A Structural Comparison | Why a clock has one answer and the notes puzzle has several, and why one system cannot have both. | [10.5281/zenodo.22804148](https://doi.org/10.5281/zenodo.22804148) |
+| The 19-9 System: N = 19A + 9B | A second example of the same idea with smaller numbers (19 and 9). | [10.5281/zenodo.19474707](https://zenodo.org/records/19474707) |
 
-The **19-9 system** shares the same core, `p ≡ 1 (mod q)`, with the (25,12) system. Scaling from (19,9) to (25,12) moves the Frobenius number from 143 to 263 and the structural period `pq` from 171 to 300. The anchor family, the first run of `q` consecutive representable integers, starts at 144 and 264 respectively and grows from 9 to 12 integers.
+The 19-9 system follows the same rule as the 25-12 system. Going from (19, 9) to (25, 12) moves the largest amount that cannot be paid from 143 to 263. The first run of consecutive payable amounts starts at 144 and 264, and its length grows from 9 to 12.
+
+**Related work:** [The D³ Pattern](https://doi.org/10.5281/zenodo.20819940) is a separate project that applies a similar layered idea elsewhere.
 
 ---
 
-## Citation
+## How to cite
+
+GitHub's **Cite this repository** button (right-hand side of this page) uses `CITATION.cff`. For BibTeX:
 
 ```bibtex
 @misc{elissaoui2026rdsi,
@@ -394,18 +364,13 @@ The **19-9 system** shares the same core, `p ≡ 1 (mod q)`, with the (25,12) sy
 }
 ```
 
----
-
 ## License
 
-Released under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0** (CC BY-NC-SA 4.0).
-Commercial use is not covered by this license.
-
----
+Released under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0** (CC BY-NC-SA 4.0). Commercial use is not covered by this license.
 
 ## Contact
 
 **Bilal El Issaoui**, Independent Researcher, Amsterdam
 elissa.oui.amster@gmail.com · elissa.oui@outlook.com
 
-Or open an [issue](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/issues) or start a [discussion](https://github.com/A19dammer91/the-exact-algebraic-condition-for-clock-behaviour/discussions).
+Or open an [issue](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/issues) or start a [discussion](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/discussions).
