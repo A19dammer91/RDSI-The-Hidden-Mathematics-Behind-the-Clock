@@ -48,7 +48,13 @@ def test_foundation_sweep() -> None:
 
 
 @pytest.mark.slow
-def test_all_non_representable() -> None:
-    """Every N below the Frobenius number must be non-representable."""
+def test_frobenius_matches_bruteforce() -> None:
+    """The ladder matches direct enumeration up to the Frobenius number."""
     for n in range(0, FROBENIUS + 1):
-        assert ladder(n, P, Q) == [], f"N={n} should not be representable"
+        brute = any(
+            P * a + Q * b == n
+            for a in range(n // P + 1)
+            for b in range(n // Q + 1)
+        )
+        assert (ladder(n, P, Q) != []) == brute, f"mismatch at N={n}"
+    assert ladder(FROBENIUS, P, Q) == []
