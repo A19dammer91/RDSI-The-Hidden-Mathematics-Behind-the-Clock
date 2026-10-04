@@ -359,8 +359,8 @@ GitHub's **Cite this repository** button (right-hand side of this page) uses `CI
   author    = {El Issaoui, Bilal},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.19474707},
-  url       = {https://zenodo.org/records/19474707}
+  doi       = {10.5281/zenodo.22818240},
+  url       = {https://doi.org/10.5281/zenodo.22818240}
 }
 ```
 
