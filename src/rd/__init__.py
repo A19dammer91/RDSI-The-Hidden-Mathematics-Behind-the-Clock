@@ -10,7 +10,7 @@ from rd.cascade import Stamp, compose_ms, decompose_ms, dial_hour, format_stamp
 from rd.cycle import Cycle, Decomposition
 from rd.ladder import Pair, frobenius, ladder, representation_count
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
 
 __all__ = [
     "Cycle",
