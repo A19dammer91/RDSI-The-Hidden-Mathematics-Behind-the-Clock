@@ -44,13 +44,13 @@ class Stamp:
 
     def __post_init__(self) -> None:
         if not 0 <= self.hours < 24:
-            raise ValueError(f"hours buiten bereik: {self.hours}")
+            raise ValueError(f"hours out of range: {self.hours}")
         if not 0 <= self.minutes < 60:
-            raise ValueError(f"minutes buiten bereik: {self.minutes}")
+            raise ValueError(f"minutes out of range: {self.minutes}")
         if not 0 <= self.seconds < 60:
-            raise ValueError(f"seconds buiten bereik: {self.seconds}")
+            raise ValueError(f"seconds out of range: {self.seconds}")
         if not 0 <= self.millis < 1_000:
-            raise ValueError(f"millis buiten bereik: {self.millis}")
+            raise ValueError(f"millis out of range: {self.millis}")
 
 
 def decompose_ms(t: int) -> Stamp:
