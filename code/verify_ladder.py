@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from itertools import pairwise
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -56,7 +57,7 @@ def run(max_n: int, p: int, q: int, quiet: bool) -> int:
             if pair.a < 0:
                 failures.append(f"N={n}: negative A = {pair.a}")
 
-        for left, right in zip(pairs, pairs[1:]):
+        for left, right in pairwise(pairs):
             if right.a - left.a != q:
                 failures.append(f"N={n}: step in A is {right.a - left.a}, "
                                 f"expected {q}")
@@ -99,3 +100,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+ 
