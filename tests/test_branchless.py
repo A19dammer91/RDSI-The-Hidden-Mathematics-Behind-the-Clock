@@ -11,6 +11,7 @@ Not counted: raise-guards, i.e. an `if` whose body consists only of
 the edge (also in __post_init__ or _check_system), they are not part of
 the computation in the path.
 """
+
 from __future__ import annotations
 
 import ast
@@ -51,14 +52,14 @@ def count_branches(fn: Callable[..., object]) -> int:
 
 
 BRANCHLESS_CORE: list[tuple[str, Callable[..., object]]] = [
-    ("Cycle.index",            Cycle.index),
-    ("Cycle.position",         Cycle.position),
-    ("Cycle.cycles",           Cycle.cycles),
-    ("Cycle.decompose",        Cycle.decompose),
+    ("Cycle.index", Cycle.index),
+    ("Cycle.position", Cycle.position),
+    ("Cycle.cycles", Cycle.cycles),
+    ("Cycle.decompose", Cycle.decompose),
     ("Cycle.transition_count", Cycle.transition_count),
-    ("dial_hour",              dial_hour),
-    ("to_zero_based",          to_zero_based),
-    ("from_zero_based",        from_zero_based),
+    ("dial_hour", dial_hour),
+    ("to_zero_based", to_zero_based),
+    ("from_zero_based", from_zero_based),
 ]
 
 
@@ -82,6 +83,7 @@ def test_cycle_walk_is_also_branchless() -> None:
 
 def test_counter_detects_a_branch() -> None:
     """Self-check: the branch counter must find branches when present."""
+
     def with_if(x: int) -> int:
         if x > 0:
             return 1
@@ -100,6 +102,7 @@ def test_counter_detects_a_branch() -> None:
 
 def test_counter_ignores_raise_guards() -> None:
     """Self-check: a pure input guard is not counted as a branch."""
+
     def with_guard(x: int) -> int:
         if x < 1:
             raise ValueError("x >= 1 required")
@@ -116,6 +119,7 @@ def test_counter_ignores_raise_guards() -> None:
 
 def test_counter_still_counts_guard_lookalikes() -> None:
     """Self-check: an `if` that does more than raise is still a branch."""
+
     def with_else(x: int) -> int:
         if x < 1:
             raise ValueError("x >= 1 required")
@@ -130,4 +134,3 @@ def test_counter_still_counts_guard_lookalikes() -> None:
 
     assert count_branches(with_else) == 1
     assert count_branches(with_work_in_body) == 1
-

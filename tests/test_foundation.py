@@ -4,6 +4,7 @@ For every N from 264 onward the smallest coefficient A on the ladder
 equals N mod 12. The value 263 is the Frobenius number of (25, 12):
 the largest integer that has no representation at all.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -12,8 +13,8 @@ from rd.ladder import frobenius, ladder
 
 P = 25
 Q = 12
-FROBENIUS = 263      # 25*12 - 25 - 12
-FOUNDATION = 264     # smallest representable integer: 24 * 11
+FROBENIUS = 263  # 25*12 - 25 - 12
+FOUNDATION = 264  # smallest representable integer: 24 * 11
 
 
 def test_frobenius_value() -> None:
@@ -52,9 +53,7 @@ def test_frobenius_matches_bruteforce() -> None:
     """The ladder matches direct enumeration up to the Frobenius number."""
     for n in range(0, FROBENIUS + 1):
         brute = any(
-            P * a + Q * b == n
-            for a in range(n // P + 1)
-            for b in range(n // Q + 1)
+            P * a + Q * b == n for a in range(n // P + 1) for b in range(n // Q + 1)
         )
         assert (ladder(n, P, Q) != []) == brute, f"mismatch at N={n}"
     assert ladder(FROBENIUS, P, Q) == []

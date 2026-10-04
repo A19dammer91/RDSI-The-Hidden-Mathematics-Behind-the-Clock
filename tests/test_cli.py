@@ -1,4 +1,5 @@
 """Tests for the command line interface in rd.__main__."""
+
 from __future__ import annotations
 
 import pytest
@@ -6,6 +7,7 @@ import pytest
 from rd.__main__ import main
 
 # ---------------------------------------------------------------- ms mode
+
 
 def test_ms_mode(capsys: pytest.CaptureFixture[str]) -> None:
     code = main(["--ms", "45296789"])
@@ -29,6 +31,7 @@ def test_ms_mode_one_day(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 # ------------------------------------------------------------ system mode
+
 
 def test_system_mode_success(capsys: pytest.CaptureFixture[str]) -> None:
     code = main(["--system", "25,12", "500"])
@@ -59,6 +62,7 @@ def test_system_mode_no_representation(
 
 # ---------------------------------------------------- malformed arguments
 
+
 def test_system_mode_missing_comma(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
@@ -87,6 +91,7 @@ def test_system_mode_invalid_relation(
 
 
 # -------------------------------------------------------------- argparse
+
 
 def test_missing_mode_argument() -> None:
     """Without --ms or --system, argparse exits with an error."""

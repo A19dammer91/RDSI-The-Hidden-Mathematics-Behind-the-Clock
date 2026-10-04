@@ -8,6 +8,7 @@ relation makes the smallest coefficient a single step:
 and every further solution is reached by stepping +q in A and -p in B.
 That is the ladder of the RDSI paper.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator
@@ -43,9 +44,7 @@ def _check_system(p: int, q: int) -> None:
     if p <= 0:
         raise ValueError(f"p > 0 required, got p={p}")
     if (p - 1) % q != 0:
-        raise ValueError(
-            f"foundation relation violated: p={p} is not ≡ 1 (mod {q})"
-        )
+        raise ValueError(f"fundamentele relatie geschonden: p={p} ≢ 1 (mod {q})")
 
 
 def ladder(n: int, p: int, q: int) -> list[Pair]:

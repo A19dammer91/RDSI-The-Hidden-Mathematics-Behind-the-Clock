@@ -4,6 +4,7 @@
 
 Three domains, one representation choice: p ≡ 1 (mod q).
 """
+
 from rd.adapters import from_zero_based, to_zero_based
 from rd.cascade import Stamp, compose_ms, decompose_ms, dial_hour, format_stamp
 from rd.cycle import Cycle, Decomposition

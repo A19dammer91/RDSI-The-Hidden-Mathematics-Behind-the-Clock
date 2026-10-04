@@ -4,6 +4,7 @@ Usage:
     python -m rd 45296789 --ms
     python -m rd 500 --system 25,12
 """
+
 from __future__ import annotations
 
 import argparse

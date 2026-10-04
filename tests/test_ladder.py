@@ -1,4 +1,5 @@
 """Invariant 2: the ladder, plus full coverage of ladder.py."""
+
 from __future__ import annotations
 
 from itertools import pairwise
@@ -31,6 +32,7 @@ def brute_force_count(n: int, p: int, q: int) -> int:
 
 # ---------------------------------------------------------------- Pair
 
+
 def test_pair_value() -> None:
     assert Pair(8, 25).value(25, 12) == 500
 
@@ -42,6 +44,7 @@ def test_pair_iter() -> None:
 
 
 # -------------------------------------------------------------- ladder
+
 
 @pytest.mark.parametrize("n", [500, 575, 0, 1, 100, 263, 264, 1000])
 def test_known_values(n: int) -> None:
@@ -85,6 +88,7 @@ def test_ladder_step_size() -> None:
 
 # ---------------------------------------------------------- frobenius
 
+
 def test_frobenius_value() -> None:
     assert frobenius(P, Q) == 263
 
@@ -98,6 +102,7 @@ def test_frobenius_formula_holds_for_other_pairs() -> None:
 
 # --------------------------------------------- representation_count
 
+
 def test_representation_count_negative() -> None:
     assert representation_count(-1, P, Q) == 0
 
@@ -108,6 +113,7 @@ def test_representation_count_at_boundary() -> None:
 
 
 # ------------------------------------------------- validation paths
+
 
 def test_invalid_q_raises() -> None:
     with pytest.raises(ValueError):
@@ -133,7 +139,7 @@ def test_invalid_p_raises() -> None:
 
 def test_invalid_relation_raises() -> None:
     with pytest.raises(ValueError):
-        ladder(500, 25, 13)      # 25 is not ≡ 1 (mod 13)
+        ladder(500, 25, 13)  # 25 is not ≡ 1 (mod 13)
     with pytest.raises(ValueError):
         representation_count(500, 25, 13)
     with pytest.raises(ValueError):
@@ -141,6 +147,7 @@ def test_invalid_relation_raises() -> None:
 
 
 # ------------------------------------------------------- slow sweeps
+
 
 @pytest.mark.slow
 def test_ladder_holds_sweep() -> None:
@@ -154,6 +161,6 @@ def test_ladder_holds_sweep() -> None:
 def test_count_matches_brute_force() -> None:
     """The fast counter agrees with an independent enumeration."""
     for n in range(0, 5_001):
-        assert representation_count(n, P, Q) == brute_force_count(n, P, Q), \
+        assert representation_count(n, P, Q) == brute_force_count(n, P, Q), (
             f"count mismatch at N={n}"
-
+        )

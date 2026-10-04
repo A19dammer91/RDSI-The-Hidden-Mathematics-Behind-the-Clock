@@ -1,4 +1,5 @@
 """Tests for the 0-based to 1-based bridge."""
+
 from __future__ import annotations
 
 import pytest
@@ -7,15 +8,19 @@ from rd.adapters import from_zero_based, to_zero_based
 
 # ------------------------------------------------------- from_zero_based
 
-@pytest.mark.parametrize("zero,expected", [
-    (0, 12),
-    (1, 1),
-    (11, 11),
-    (12, 12),
-    (13, 1),
-    (24, 12),
-    (25, 1),
-])
+
+@pytest.mark.parametrize(
+    "zero,expected",
+    [
+        (0, 12),
+        (1, 1),
+        (11, 11),
+        (12, 12),
+        (13, 1),
+        (24, 12),
+        (25, 1),
+    ],
+)
 def test_from_zero_based(zero: int, expected: int) -> None:
     assert from_zero_based(zero, 12) == expected
 
@@ -35,14 +40,18 @@ def test_from_zero_based_rejects_invalid_q() -> None:
 
 # --------------------------------------------------------- to_zero_based
 
-@pytest.mark.parametrize("position,expected", [
-    (1, 1),
-    (11, 11),
-    (12, 0),
-    (13, 1),
-    (24, 0),
-    (25, 1),
-])
+
+@pytest.mark.parametrize(
+    "position,expected",
+    [
+        (1, 1),
+        (11, 11),
+        (12, 0),
+        (13, 1),
+        (24, 0),
+        (25, 1),
+    ],
+)
 def test_to_zero_based(position: int, expected: int) -> None:
     assert to_zero_based(position, 12) == expected
 
@@ -55,6 +64,7 @@ def test_to_zero_based_rejects_invalid_q() -> None:
 
 
 # ------------------------------------------------------------ round trip
+
 
 def test_round_trip_for_all_cycle_lengths() -> None:
     """from_zero_based and to_zero_based are exact inverses."""

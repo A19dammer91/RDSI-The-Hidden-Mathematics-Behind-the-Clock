@@ -12,6 +12,7 @@ Exit code 0 on success, 1 on any failure.
 Usage:
     python code/verify_ladder.py [--max N] [--p P] [--q Q]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -49,9 +50,7 @@ def run(max_n: int, p: int, q: int, quiet: bool) -> int:
 
         for pair in pairs:
             if pair.value(p, q) != n:
-                failures.append(
-                    f"N={n}: p*A + q*B = {pair.value(p, q)}, expected {n}"
-                )
+                failures.append(f"N={n}: p*A + q*B = {pair.value(p, q)}, expected {n}")
             if pair.b < 0:
                 failures.append(f"N={n}: negative B = {pair.b}")
             if pair.a < 0:
@@ -59,11 +58,9 @@ def run(max_n: int, p: int, q: int, quiet: bool) -> int:
 
         for left, right in pairwise(pairs):
             if right.a - left.a != q:
-                failures.append(f"N={n}: step in A is {right.a - left.a}, "
-                                f"expected {q}")
+                failures.append(f"N={n}: step in A is {right.a - left.a}, expected {q}")
             if left.b - right.b != p:
-                failures.append(f"N={n}: step in B is {left.b - right.b}, "
-                                f"expected {p}")
+                failures.append(f"N={n}: step in B is {left.b - right.b}, expected {p}")
 
         fast = representation_count(n, p, q)
         slow = brute_force_count(n, p, q)
@@ -89,8 +86,12 @@ def run(max_n: int, p: int, q: int, quiet: bool) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--max", type=int, default=5_000,
-                   help="upper bound for the sweep (default: 5000)")
+    p.add_argument(
+        "--max",
+        type=int,
+        default=5_000,
+        help="upper bound for the sweep (default: 5000)",
+    )
     p.add_argument("--p", type=int, default=25)
     p.add_argument("--q", type=int, default=12)
     p.add_argument("--quiet", action="store_true")
@@ -100,4 +101,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

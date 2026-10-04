@@ -6,6 +6,7 @@ below are the only correct shifts. Their computation is branch-free;
 the only `if` in each function is a raise-guard on q, which validates
 the input and is not part of the computation.
 """
+
 from __future__ import annotations
 
 __all__ = [
@@ -48,4 +49,3 @@ def from_zero_based(zero: int, q: int) -> int:
     if q < 1:
         raise ValueError(f"q >= 1 required, got q={q}")
     return (zero - 1) % q + 1
-

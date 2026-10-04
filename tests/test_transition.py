@@ -1,4 +1,5 @@
 """Invariant 4: the transition, plus full coverage of Cycle."""
+
 from __future__ import annotations
 
 import pytest
@@ -6,6 +7,7 @@ import pytest
 from rd.cycle import Cycle, Decomposition
 
 # ------------------------------------------------------------ oracle
+
 
 def oracle_position(t: int, q: int) -> int:
     """Step-by-step simulation: no formula, just counting."""
@@ -31,17 +33,21 @@ def oracle_cycles(t: int, q: int) -> int:
 
 # --------------------------------------------------- specific values
 
-@pytest.mark.parametrize("t,expected", [
-    (1, 1),
-    (11, 11),
-    (12, 12),
-    (13, 1),
-    (23, 11),
-    (24, 12),
-    (25, 1),
-    (36, 12),
-    (37, 1),
-])
+
+@pytest.mark.parametrize(
+    "t,expected",
+    [
+        (1, 1),
+        (11, 11),
+        (12, 12),
+        (13, 1),
+        (23, 11),
+        (24, 12),
+        (25, 1),
+        (36, 12),
+        (37, 1),
+    ],
+)
 def test_known_positions(t: int, expected: int) -> None:
     assert Cycle(12).position(t) == expected
 
@@ -71,6 +77,7 @@ def test_cycles_count() -> None:
 
 # --------------------------------------------------- decompose/walk
 
+
 def test_decompose_returns_dataclass() -> None:
     d = Cycle(12).decompose(25)
     assert isinstance(d, Decomposition)
@@ -91,6 +98,7 @@ def test_walk_matches_decompose() -> None:
 
 # --------------------------------------------------- transition count
 
+
 def test_transition_count() -> None:
     """Number of end-to-beginning transitions in 1..t."""
     c = Cycle(12)
@@ -107,6 +115,7 @@ def test_transition_count_all_lengths(q: int) -> None:
 
 # ------------------------------------------------------------ repr
 
+
 def test_repr_without_p() -> None:
     assert repr(Cycle(12)) == "Cycle(q=12)"
 
@@ -116,6 +125,7 @@ def test_repr_with_p() -> None:
 
 
 # ------------------------------------------------------- edge cases
+
 
 def test_cycle_length_one() -> None:
     """Edge case: q = 1 means every step is position 1."""
@@ -127,6 +137,7 @@ def test_cycle_length_one() -> None:
 
 # ------------------------------------------------------- validation
 
+
 def test_invalid_q_raises() -> None:
     with pytest.raises(ValueError):
         Cycle(0)
@@ -136,7 +147,7 @@ def test_invalid_q_raises() -> None:
 
 def test_invalid_p_raises() -> None:
     with pytest.raises(ValueError):
-        Cycle(12, p=24)      # 24 is not ≡ 1 (mod 12)
+        Cycle(12, p=24)  # 24 is not ≡ 1 (mod 12)
     with pytest.raises(ValueError):
         Cycle(12, p=0)
     with pytest.raises(ValueError):
@@ -144,6 +155,7 @@ def test_invalid_p_raises() -> None:
 
 
 # ------------------------------------------------------- slow sweeps
+
 
 @pytest.mark.slow
 def test_transition_sweep() -> None:

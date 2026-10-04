@@ -10,6 +10,7 @@ The distinction is the formal heart of the RDSI paper: end and
 beginning are different moments, and the transition p ≡ 1 (mod q) is
 the model, not a by-product of the division.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -63,8 +64,7 @@ class Cycle:
                 raise ValueError(f"p > 0 vereist, kreeg p={self.p}")
             if (self.p - 1) % self.q != 0:
                 raise ValueError(
-                    f"fundamentele relatie geschonden: "
-                    f"p={self.p} ≢ 1 (mod {self.q})"
+                    f"fundamentele relatie geschonden: p={self.p} ≢ 1 (mod {self.q})"
                 )
 
     # ---------------------------------------------------------------- core

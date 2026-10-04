@@ -12,6 +12,7 @@ Exit code 0 on success, 1 on any failure.
 Usage:
     python code/verify_clock.py [--days N] [--random N] [--quiet]
 """
+
 from __future__ import annotations
 
 import argparse
@@ -97,10 +98,18 @@ def run(days: int, random_n: int, quiet: bool) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--days", type=int, default=2,
-                   help="how many days to sweep exhaustively (default: 2)")
-    p.add_argument("--random", type=int, default=200_000,
-                   help="number of random instants to check (default: 200000)")
+    p.add_argument(
+        "--days",
+        type=int,
+        default=2,
+        help="how many days to sweep exhaustively (default: 2)",
+    )
+    p.add_argument(
+        "--random",
+        type=int,
+        default=200_000,
+        help="number of random instants to check (default: 200000)",
+    )
     p.add_argument("--quiet", action="store_true")
     args = p.parse_args(argv)
     return run(args.days, args.random, args.quiet)
