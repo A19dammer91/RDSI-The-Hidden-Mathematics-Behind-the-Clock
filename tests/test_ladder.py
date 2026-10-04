@@ -1,6 +1,8 @@
 """Invariant 2: the ladder, plus full coverage of ladder.py."""
 from __future__ import annotations
 
+from itertools import pairwise
+
 import pytest
 
 from rd.ladder import (
@@ -68,7 +70,7 @@ def test_negative_input_returns_empty() -> None:
 def test_ladder_is_ordered() -> None:
     """Pairs come back with increasing A and decreasing B."""
     pairs = ladder(5000, P, Q)
-    for left, right in zip(pairs, pairs[1:]):
+    for left, right in pairwise(pairs):
         assert right.a > left.a
         assert right.b < left.b
 
@@ -76,7 +78,7 @@ def test_ladder_is_ordered() -> None:
 def test_ladder_step_size() -> None:
     """Consecutive pairs differ by exactly +12 in A and -25 in B."""
     pairs = ladder(5000, P, Q)
-    for left, right in zip(pairs, pairs[1:]):
+    for left, right in pairwise(pairs):
         assert right.a - left.a == Q
         assert left.b - right.b == P
 
@@ -154,3 +156,4 @@ def test_count_matches_brute_force() -> None:
     for n in range(0, 5_001):
         assert representation_count(n, P, Q) == brute_force_count(n, P, Q), \
             f"count mismatch at N={n}"
+        
