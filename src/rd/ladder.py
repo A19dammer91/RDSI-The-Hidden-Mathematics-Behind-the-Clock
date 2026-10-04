@@ -11,6 +11,7 @@ That is the ladder of the RDSI paper.
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from dataclasses import dataclass
 
 __all__ = [
@@ -32,16 +33,16 @@ class Pair:
         """Evaluate p*A + q*B."""
         return p * self.a + q * self.b
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[int]:
         yield self.a
         yield self.b
 
 
 def _check_system(p: int, q: int) -> None:
     if q < 1:
-        raise ValueError(f"q >= 1 vereist, kreeg q={q}")
+        raise ValueError(f"q >= 1 required, got q={q}")
     if p <= 0:
-        raise ValueError(f"p > 0 vereist, kreeg p={p}")
+        raise ValueError(f"p > 0 required, got p={p}")
     if (p - 1) % q != 0:
         raise ValueError(f"fundamentele relatie geschonden: p={p} ≢ 1 (mod {q})")
 
