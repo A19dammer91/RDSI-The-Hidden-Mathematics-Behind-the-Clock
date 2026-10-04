@@ -5,7 +5,7 @@
 [![CI](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml/badge.svg)](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml)
 [![no special cases in the core](https://img.shields.io/badge/branchless%20core-enforced-success)](#no-special-cases-needed)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)](LICENSE)
+[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/blob/main/LICENSE)
 
 [📘 **Main paper**](https://doi.org/10.5281/zenodo.23077746) ·
 [📄 **Clock paper**](https://doi.org/10.5281/zenodo.22804148) ·
@@ -40,6 +40,74 @@ python -m rd 45296789 --ms
 ```
 
 You need Python 3.10 or newer.
+
+---
+
+## The core idea
+
+The fundamental idea is simple: **shifting from 0-based to 1-based counting removes the need for complicated software workarounds.**
+
+In a cycle of length `q` (for a 12-hour dial, `q = 12`):
+
+- `T = q` is the **end** of a cycle.
+- `T = q + 1` is the **start** of the next one.
+
+Because of that, two short formulas are enough. They are the heart of the library:
+
+```text
+Cycle.position(T)  =  ((T - 1) % q) + 1     which step of the cycle you are on (1 to q)
+Cycle.cycles(T)    =   (T - 1) // q         how many full cycles lie behind you
+```
+
+Here `%` is the remainder of a division and `//` is the whole-number part. For `q = 12`:
+
+| T | `position` | `cycles` | What it means |
+|---|---|---|---|
+| 1 | 1 | 0 | first step of the first cycle |
+| 11 | 11 | 0 | |
+| 12 | 12 | 0 | **end** of the first cycle |
+| 13 | 1 | 1 | **start** of the second cycle |
+| 24 | 12 | 1 | end of the second cycle |
+| 25 | 1 | 2 | start of the third cycle |
+
+These formulas express the cycle entirely through arithmetic. Instead of bit tricks or extra `if` checks at the boundaries, the structure comes straight from the algebra. No logical jumps are needed by design, which removes a common source of off-by-one errors and keeps the execution path clean and predictable. A test enforces this on every push (see [No special cases needed](#no-special-cases-needed)).
+
+### How the layers chain together
+
+`Cycle.cycles(T)` returns a clean whole number: how many full cycles lie behind you, with no leftovers and no special values. Because of that, the result can be handed straight to the next layer of a larger system, for example from seconds to minutes, or from hours to a day counter, without any clean-up in between. Each layer uses the same kind of arithmetic as the one before it. This chain of layers is the **cascade**.
+
+The stopwatch from the question is built this way. Each layer shows its remainder and passes the whole number on:
+
+| Layer | Input | Shown (remainder) | Passed on (whole number) |
+|---|---|---|---|
+| milliseconds → seconds | 45,296,789 ms | 789 ms | 45,296 s |
+| seconds → minutes | 45,296 s | 56 s | 754 min |
+| minutes → hours | 754 min | 34 min | 12 h |
+| hours → days | 12 h | 12 h | 0 days |
+
+Result: 0 days, 12:34:56.789. Adding a new layer, such as weeks or years, means adding one more row, not a new rule.
+
+One detail: inside the stopwatch, elapsed time starts at 0 (00:00:00 is a real moment), so the whole numbers can be passed on as they are. The 1-based rule applies at the **dial**, where a cycle must show its end: hour 0 is displayed as 12. Count something from 1 and you add 1 when you hand the number to the next layer.
+
+### Why counting from 0 causes trouble
+
+Most software counts positions from 0: for a 12-hour dial, positions 0 to 11. That looks harmless, but **the end of one cycle and the start of the next get the same number.** Midnight is both the end of one day and the start of the next. Programmers know the result as the "off-by-one error".
+
+Counting 1 to 12 keeps the end and the start apart:
+
+| Number | Counting 0 to 11 | Counting 1 to 12 |
+|---|---|---|
+| 12 | position 0, which is "the beginning" | position 12, the end of the cycle |
+| 13 | position 1 | position 1, after one full cycle |
+| 24 | position 0, end and beginning at once | position 12, the end only |
+| 25 | position 1 | position 1, after two full cycles |
+
+This is why a clock face has no hour 0: after 12 comes 1. The same calculation, written both ways:
+
+| | Counting from 0 | Counting from 1 |
+|---|---|---|
+| Position of number T | `T % q` | `((T - 1) % q) + 1` |
+| Full cycles behind T | `T // q` | `(T - 1) // q` |
 
 ---
 
@@ -94,32 +162,6 @@ Both puzzles have the same shape (add up multiples of some numbers), but they ar
 | Amounts that cannot be made | up to 263 | none, every moment can be shown |
 
 A clock is not a weaker version of the notes puzzle. It is a different design with a different goal. The Clock paper shows that you cannot have both properties in the same system.
-
-## Counting from 1 instead of 0
-
-This is the central idea of the main paper.
-
-Most software counts positions in a cycle from 0: for a 12-hour dial, positions 0 to 11. That looks harmless, but it causes a real problem. **The end of one cycle and the start of the next get the same number.** Midnight is both the end of one day and the start of the next. Programmers know the result as the "off-by-one error".
-
-Counting 1 to 12 instead is not just a matter of taste. It keeps the end and the start apart:
-
-| Number | Counting 0 to 11 | Counting 1 to 12 |
-|---|---|---|
-| 12 | position 0, which is "the beginning" | position 12, the end of the cycle |
-| 13 | position 1 | position 1, after one full cycle |
-| 24 | position 0, end and beginning at once | position 12, the end only |
-| 25 | position 1 | position 1, after two full cycles |
-
-This is why a clock face has no hour 0: after 12 comes 1.
-
-The same calculation, written both ways:
-
-| | Counting from 0 | Counting from 1 |
-|---|---|---|
-| Position of number T | `T mod q` | `(T − 1) mod q + 1` |
-| Full cycles completed | `T div q` | `(T − 1) div q` |
-
-Here `q` is the length of the cycle (for example 12), and `mod` and `div` are the remainder and the whole-number part of a division.
 
 ## Why this matters
 
@@ -197,6 +239,8 @@ pytest tests/test_branchless.py -v --no-cov
 | `Cycle.cycles` | `cycle.py` | 0 |
 | `Cycle.decompose` | `cycle.py` | 0 |
 | `Cycle.transition_count` | `cycle.py` | 0 |
+| `decompose_ms` | `cascade.py` | 0 |
+| `compose_ms` | `cascade.py` | 0 |
 | `dial_hour` | `cascade.py` | 0 |
 | `to_zero_based` | `adapters.py` | 0 |
 | `from_zero_based` | `adapters.py` | 0 |
@@ -317,7 +361,7 @@ mypy src                          # type check
 
 ## Papers
 
-The first two are also included as PDFs in the [`papers/`](papers/) folder.
+The first two are also included as PDFs in the [`papers/`](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/tree/main/papers) folder.
 
 | Paper | What it covers | DOI |
 |---|---|---|
@@ -359,8 +403,8 @@ GitHub's **Cite this repository** button (right-hand side of this page) uses `CI
   author    = {El Issaoui, Bilal},
   year      = {2026},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.22818240},
-  url       = {https://doi.org/10.5281/zenodo.22818240}
+  doi       = {10.5281/zenodo.19474707},
+  url       = {https://zenodo.org/records/19474707}
 }
 ```
 
