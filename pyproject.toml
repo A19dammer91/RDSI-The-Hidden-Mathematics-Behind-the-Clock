@@ -3,7 +3,7 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "rdsi"
+name = "rdsi-1-based-cycle"
 version = "1.0.0"
 description = "Representation Domain: 1-based cycle algebra, Diophantine ladder, and clock cascade."
 readme = "README.md"
