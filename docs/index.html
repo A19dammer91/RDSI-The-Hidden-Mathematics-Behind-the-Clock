@@ -110,6 +110,9 @@ details p{margin:10px 0 0}
 <div class="card">
 <label class="lab" for="tf">T (ms)</label>
 <input id="tf" type="text" inputmode="numeric" value="0">
+<label class="lab" for="sl" style="margin-top:16px">Climbing clock: 0 to 12:34:56.789</label>
+<input id="sl" type="range" min="0" max="45296789" step="1" value="0" aria-label="Climbing clock">
+<p style="margin:6px 0 0;font-size:.82rem">Drag it all the way to the right and you land on 45,296,789 ms: the digits 1 to 9 in order.</p>
 <div class="btns">
 <button id="mn" type="button">−1s</button>
 <button id="pl" type="button">+1s</button>
@@ -272,6 +275,7 @@ function render(){
   });
   $('sum').textContent='86400000\u00B7'+v.d+' + 3600000\u00B7'+v.h+' + 60000\u00B7'+v.m+' + 1000\u00B7'+v.s+' + '+v.ms+' = '+T;
   if(document.activeElement!==$('tf'))$('tf').value=String(T);
+  $('sl').value=String(Math.min(T,45296789));
 }
 function flash(e){if(!e)return;e.classList.remove('flash');void e.offsetWidth;e.classList.add('flash')}
 function apply(n,fl){
@@ -288,6 +292,7 @@ function fieldIn(l){
 }
 $('tf').addEventListener('input',function(){var v=num($('tf').value,9e15);if(v!==null)setT(v,true)});
 $('tf').addEventListener('blur',function(){$('tf').value=String(T)});
+$('sl').addEventListener('input',function(){setT(Number($('sl').value),true)});
 $('mn').addEventListener('click',function(){setT(T-1000,true)});
 $('pl').addEventListener('click',function(){setT(T+1000,true)});
 $('rs').addEventListener('click',function(){stop();setT(0,false)});
