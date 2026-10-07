@@ -2,26 +2,12 @@
 
 **How a huge number becomes something you can read, and why one small choice, counting from 1 instead of 0, removes a whole family of bugs.**
 
-[
-
-![CI](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml/badge.svg)
-
-](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml)
-[
-
-![no special cases in the core](https://img.shields.io/badge/branchless%20core-enforced-success)
-
-](#no-special-cases-needed)
-[
-
-![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
-
-](https://www.python.org/downloads/)
-[
-
-![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)
-
-](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/blob/main/LICENSE)
+<p>
+<a href="https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml"><img src="https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<a href="#no-special-cases-needed"><img src="https://img.shields.io/badge/branchless%20core-enforced-success" alt="no special cases in the core"></a>
+<a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.10%2B-blue" alt="Python 3.10+"></a>
+<a href="https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey" alt="License: CC BY-NC-SA 4.0"></a>
+</p>
 
 [📘 **Main paper**](https://doi.org/10.5281/zenodo.23077746) ·
 [📄 **Clock paper**](https://doi.org/10.5281/zenodo.22804148) ·
@@ -333,7 +319,7 @@ In the [interactive demo](https://a19dammer91.github.io/RDSI-The-Hidden-Mathemat
 
 ## Project layout
 
-```
+```text
 .
 ├── papers/
 │   ├── RDSI.pdf                 # Main paper
@@ -442,4 +428,4 @@ Released under **Creative Commons Attribution-NonCommercial-ShareAlike 4.0** (CC
 **Bilal El Issaoui**, Independent Researcher, Amsterdam
 elissa.oui.amster@gmail.com · elissa.oui@outlook.com
 
-Or open an [issue](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/issues) or start a [discussion](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/discussions).
+Or open an [issue](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/issues) or start a [discussion](https://github.com/A19dammer
