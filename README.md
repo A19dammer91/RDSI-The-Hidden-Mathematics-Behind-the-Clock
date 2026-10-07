@@ -2,10 +2,26 @@
 
 **How a huge number becomes something you can read, and why one small choice, counting from 1 instead of 0, removes a whole family of bugs.**
 
-[![CI](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml/badge.svg)](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml)
-[![no special cases in the core](https://img.shields.io/badge/branchless%20core-enforced-success)](#no-special-cases-needed)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/downloads/)
-[![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/blob/main/LICENSE)
+[
+
+![CI](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml/badge.svg)
+
+](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/actions/workflows/ci.yml)
+[
+
+![no special cases in the core](https://img.shields.io/badge/branchless%20core-enforced-success)
+
+](#no-special-cases-needed)
+[
+
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+
+](https://www.python.org/downloads/)
+[
+
+![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-lightgrey)
+
+](https://github.com/A19dammer91/RDSI-The-Hidden-Mathematics-Behind-the-Clock/blob/main/LICENSE)
 
 [📘 **Main paper**](https://doi.org/10.5281/zenodo.23077746) ·
 [📄 **Clock paper**](https://doi.org/10.5281/zenodo.22804148) ·
@@ -26,7 +42,13 @@ This project answers those questions with simple examples, working code and chec
 
 - **Papers** that explain the clock and compare it with a different kind of number puzzle
 - **A small Python library** (`rd`) with no extra dependencies
-- **An interactive demo** where you drag a slider and watch the units carry over
+- **An interactive demo** that starts with a clock you can play with to see what modulo means, then lets you drag a slider and watch the units carry over
+
+## Modulo in one minute
+
+Modulo is the remainder after division, and it is famously hard to explain with formulas alone. But everyone understands a clock. It is 11 o'clock; three hours from now it is 2 o'clock. That is 11 + 3 = 14, and 14 mod 12 = 2: one full lap of 12, and 2 hours left over.
+
+Everything in this project builds on that idea. The stopwatch above is the same trick repeated in layers: 1000 milliseconds make a second, 60 seconds make a minute, 60 minutes make an hour, and at every layer you keep the leftover and pass the full laps on to the next.
 
 ## Quick start
 
@@ -70,6 +92,8 @@ Here `%` is the remainder of a division and `//` is the whole-number part. For `
 | 24 | 12 | 1 | end of the second cycle |
 | 25 | 1 | 2 | start of the third cycle |
 
+A third quantity, `Cycle.transition_count(T) = T // q`, counts the boundaries you have passed. It is not the same as `cycles`: at `T = 12` the position is 12 and `cycles` is 0 (the cycle has ended but the next has not started), yet one transition has already happened. From `T = 13` on, both agree again.
+
 These formulas express the cycle entirely through arithmetic. Instead of bit tricks or extra `if` checks at the boundaries, the structure comes straight from the algebra. No logical jumps are needed by design, which removes a common source of off-by-one errors and keeps the execution path clean and predictable. A test enforces this on every push (see [No special cases needed](#no-special-cases-needed)).
 
 ### How the layers chain together
@@ -108,6 +132,7 @@ This is why a clock face has no hour 0: after 12 comes 1. The same calculation, 
 |---|---|---|
 | Position of number T | `T % q` | `((T - 1) % q) + 1` |
 | Full cycles behind T | `T // q` | `(T - 1) // q` |
+| Transitions passed | `T // q` | `T // q` |
 
 ---
 
@@ -159,7 +184,7 @@ Both puzzles have the same shape (add up multiples of some numbers), but they ar
 | Why it works | 25 is one more than a multiple of 12 | every unit divides evenly into the next |
 | Limits on each unit | none | seconds and minutes below 60, hours below 24 |
 | Number of answers | several (the ladder) | exactly one |
-| Amounts that cannot be made | up to 263 | none, every moment can be shown |
+| Amounts that cannot be made | some, the largest is 263 | none, every moment can be shown |
 
 A clock is not a weaker version of the notes puzzle. It is a different design with a different goal. The Clock paper shows that you cannot have both properties in the same system.
 
@@ -290,7 +315,7 @@ Add `--quiet` to hide the progress output, or `--help` to see all options.
 
 | Method | Wrong results | Special cases needed |
 |---|---|---|
-| Counting from 0, plain | at every boundary (12, 24, 36, ...) | 0 |
+| Counting from 0, plain | 8.3 % of labels (1 in 12: every boundary) | 0 |
 | Counting from 0, corrected | none | 6 |
 | Counting from 1 | none | 0 |
 
@@ -302,7 +327,7 @@ Add `--quiet` to hide the progress output, or `--help` to see all options.
 
 The digits 1 to 9 in order, a lucky meeting of the decimal system and the 24-hour day.
 
-In the [interactive demo](https://a19dammer91.github.io/RDSI-The-Hidden-Mathematics-Behind-the-Clock/) there is a slider that ends exactly on that moment: 45,296,789 milliseconds. Drag it all the way to the right. It is not a mathematical necessity, just a small tribute to the structure.
+In the [interactive demo](https://a19dammer91.github.io/RDSI-The-Hidden-Mathematics-Behind-the-Clock/) there is a slider that ends exactly on that moment: 45,296,789 milliseconds. Drag it all the way to the right, or type the number into the T field. It is not a mathematical necessity, just a small tribute to the structure.
 
 ---
 
